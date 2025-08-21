@@ -5,11 +5,13 @@ import 'package:get/get.dart';
 import '../../../Controllers/chatbot_controller.dart';
 
 class ChatInputField extends StatelessWidget {
+  final TextEditingController? controller; 
   final Color borderColor;
   final Color textColor;
 
   const ChatInputField({
     super.key,
+    this.controller, 
     required this.borderColor,
     required this.textColor,
   });
@@ -23,7 +25,7 @@ class ChatInputField extends StatelessWidget {
       final hasText = c.hasText.value;
 
       return TextField(
-        controller: c.inputCtrl,
+        controller: controller, 
         minLines: 1,
         maxLines: null,
         style: TextStyle(fontSize: 14.sp, color: textColor),
@@ -51,7 +53,12 @@ class ChatInputField extends StatelessWidget {
                   onPressed: c.sendMessage,
                 )
               : GestureDetector(
-                  onLongPressStart: (_) => c.startVoiceRecord(),
+                  onLongPressStart: (_) {
+                    if (c.isListening.value) {
+                      c.stopListening();
+                    }
+                    c.startVoiceRecord();
+                  },
                   onLongPressEnd: (_) => c.stopVoiceRecord(send: true),
                   child: Padding(
                     padding: EdgeInsets.only(right: 6.w),

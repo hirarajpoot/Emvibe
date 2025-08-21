@@ -1,13 +1,11 @@
-// lib/AppUi/AppScreens/DashboardScreen/dashboard_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart'; // GetX import
-import 'dart:math' as math; // For custom painter
+import 'package:get/get.dart'; 
+import 'dart:math' as math; 
 
 import '../../Common_Widget/top_app_bar.dart';
 import '../Chatbot/ChatBotWidgets/chat_sidebar.dart';
 
-// ActivityController for GetX state management (unchanged)
 class ActivityController extends GetxController {
   var heartRate = 130.obs;
   var totalSteps = 5500.obs;
@@ -35,7 +33,6 @@ class ActivityController extends GetxController {
   }
 }
 
-// HabitController for GetX state management (unchanged)
 class HabitController extends GetxController {
   var selectedTab = 'Habits'.obs;
 
@@ -84,9 +81,8 @@ class HabitController extends GetxController {
   }
 }
 
-// DailyProgressController for GetX state management (unchanged)
 class DailyProgressController extends GetxController {
-  var dailyProgressPercentage = 85.obs; // Example value
+  var dailyProgressPercentage = 85.obs; 
   var message = "Keep working on your nutrition\nand sleep".obs;
 
   void updateDailyProgress(int newPercentage, String newMessage) {
@@ -95,14 +91,13 @@ class DailyProgressController extends GetxController {
   }
 }
 
-// MeditationController for GetX state management (NEW)
 class MeditationController extends GetxController {
   var title = "Meditation".obs;
   var subtitle = "Good vibes, good life".obs;
   var details = "positive thinking | 27min".obs;
-  var iconEmoji = "🧘‍♀️".obs; // Meditation emoji
+  var iconEmoji = "🧘‍♀️".obs; 
   var iconBackgroundColor =
-      Colors.deepPurple.shade200.obs; // Light purple background
+      Colors.deepPurple.shade200.obs; 
 
   void updateMeditationDetails({
     String? newTitle,
@@ -125,7 +120,6 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize GetX controllers
     final ActivityController activityController = Get.put(ActivityController());
     final HabitController habitController = Get.put(HabitController());
     final DailyProgressController dailyProgressController = Get.put(
@@ -140,12 +134,10 @@ class DashboardScreen extends StatelessWidget {
       appBar: const TopAppBar(),
       backgroundColor: Colors.grey.shade100,
       body: SingleChildScrollView(
-        // Added SingleChildScrollView to prevent overflow
         child: Padding(
           padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
-              // Calories Container (unchanged)
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
@@ -164,7 +156,6 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -178,11 +169,7 @@ class DashboardScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            Icon(
-                              Icons.calendar_today,
-                              size: 16.w,
-                              color: Colors.grey.shade600,
-                            ),
+                           
                             SizedBox(width: 4.w),
                             Text(
                               "Month",
@@ -192,7 +179,7 @@ class DashboardScreen extends StatelessWidget {
                               ),
                             ),
                             Icon(
-                              Icons.arrow_drop_down, // Dropdown icon added
+                              Icons.arrow_drop_down, 
                               size: 20.w,
                               color: Colors.grey.shade600,
                             ),
@@ -202,9 +189,8 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 16.h),
 
-                    // Chart Area
                     SizedBox(
-                      height: 150.h, // Height increased for bottom labels
+                      height: 150.h, 
                       child: Column(
                         children: [
                           Expanded(
@@ -212,30 +198,29 @@ class DashboardScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                _buildChartBar(0.6), // Jan
-                                _buildChartBar(0.4), // Feb
-                                _buildChartBar(0.7), // Mar
-                                _buildChartBar(0.5), // Apr
-                                _buildChartBar(0.3), // May
-                                _buildChartBar(0.65), // Jun
-                                _buildChartBar(0.7), // Jul
+                                _buildChartBar(0.6), 
+                                _buildChartBar(0.4), 
+                                _buildChartBar(0.7), 
+                                _buildChartBar(0.5), 
+                                _buildChartBar(0.3), 
+                                _buildChartBar(0.65), 
+                                _buildChartBar(0.7), 
                                 _buildChartBar(
                                   0.55,
-                                ), // Aug (Moved before Sep for correct order)
+                                ), 
                                 _buildChartBar(
                                   0.9,
                                   isHighlighted: true,
-                                ), // Sep - Highlighted bar
-                                _buildChartBar(0.45), // Oct
-                                _buildChartBar(0.3), // Nov
-                                _buildChartBar(0.6), // Dec
+                                ), 
+                                _buildChartBar(0.45), 
+                                _buildChartBar(0.3), 
+                                _buildChartBar(0.6), 
                               ],
                             ),
                           ),
                           SizedBox(
                             height: 8.h,
-                          ), // Space between bars and month labels
-                          // Month labels
+                          ), 
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -249,7 +234,7 @@ class DashboardScreen extends StatelessWidget {
                               _buildMonthLabel("Aug"),
                               _buildMonthLabel(
                                 "Sep",
-                              ), // Sep label not highlighted
+                              ), 
                               _buildMonthLabel("Oct"),
                               _buildMonthLabel("Nov"),
                               _buildMonthLabel("Dec"),
@@ -257,8 +242,7 @@ class DashboardScreen extends StatelessWidget {
                           ),
                           SizedBox(
                             height: 4.h,
-                          ), // Space between month labels and value labels
-                          // X-axis labels (values)
+                          ), 
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children:
@@ -272,11 +256,11 @@ class DashboardScreen extends StatelessWidget {
                                     .expand(
                                       (widget) => [
                                         widget,
-                                        Spacer(), // Add spacer for even distribution
+                                        Spacer(), 
                                       ],
                                     )
                                     .toList()
-                                  ..removeLast(), // Remove last spacer to avoid extra space at end
+                                  ..removeLast(), 
                           ),
                         ],
                       ),
@@ -285,8 +269,6 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30.h), // 30px space between containers
-              // Activity Container (unchanged)
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
@@ -305,7 +287,6 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -327,7 +308,7 @@ class DashboardScreen extends StatelessWidget {
                               ),
                             ),
                             Icon(
-                              Icons.arrow_drop_down, // Dropdown icon
+                              Icons.arrow_drop_down, 
                               size: 20.w,
                               color: Colors.grey.shade600,
                             ),
@@ -337,10 +318,8 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 20.h),
 
-                    // Stats Row
                     Obx(
                       () => Row(
-                        // Using Obx to react to changes in controller variables
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _buildActivityStat(
@@ -355,7 +334,7 @@ class DashboardScreen extends StatelessWidget {
                             icon: Icons.show_chart,
                             iconColor: Colors.black,
                             value: "${activityController.totalSteps.value}",
-                            unit: "", // No unit for total steps
+                            unit: "", 
                             valueColor: Colors.black,
                             label: "Total steps",
                           ),
@@ -370,11 +349,9 @@ class DashboardScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 25.h), // Space before progress bars
-                    // Progress Bars
+                    SizedBox(height: 25.h), 
                     Obx(
                       () => Column(
-                        // Using Obx for progress bar updates
                         children: [
                           _buildProgressBar(
                             label: "Move",
@@ -400,8 +377,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30.h), // 30px space between containers
-              // Habit Tracker Container (unchanged)
+              SizedBox(height: 30.h), 
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
@@ -420,7 +396,6 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -434,7 +409,6 @@ class DashboardScreen extends StatelessWidget {
                         ),
                         Obx(
                           () => Row(
-                            // Use Obx for tab selection
                             children: [
                               GestureDetector(
                                 onTap: () =>
@@ -520,10 +494,8 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 20.h),
 
-                    // List of Habits/Tasks
                     Obx(
                       () => Column(
-                        // Use Obx to rebuild when habits change or completion status toggles
                         children: habitController.habits.map((habit) {
                           return Padding(
                             padding: EdgeInsets.only(bottom: 15.h),
@@ -535,9 +507,9 @@ class DashboardScreen extends StatelessWidget {
                               habit['time'],
                               habit['location'],
                               habit['duration'],
-                              habit['isCompleted'].value, // Pass current value
+                              habit['isCompleted'].value, 
                               habitController
-                                  .toggleHabitCompletion, // Pass toggle function
+                                  .toggleHabitCompletion, 
                             ),
                           );
                         }).toList(),
@@ -547,8 +519,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30.h), // 30px space between containers
-              // Daily Progress Container (unchanged)
+              SizedBox(height: 30.h), 
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
@@ -566,7 +537,6 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 child: Obx(
                   () => Column(
-                    // Obx to react to progress changes
                     children: [
                       Text(
                         "Daily progress",
@@ -578,7 +548,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 20.h),
                       SizedBox(
-                        width: 120.w, // Size of the circular progress indicator
+                        width: 120.w, 
                         height: 120.h,
                         child: CustomPaint(
                           painter: _CircularProgressPainter(
@@ -586,7 +556,7 @@ class DashboardScreen extends StatelessWidget {
                                 dailyProgressController
                                     .dailyProgressPercentage
                                     .value /
-                                100, // Convert percentage to 0.0-1.0
+                                100, 
                             color: Colors.deepPurple.shade300,
                             backgroundColor: Colors.grey.shade200,
                             strokeWidth: 10.w,
@@ -617,15 +587,14 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30.h), // 30px space between containers
-              // Meditation Container (NEW)
+              SizedBox(height: 30.h), 
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
                   color: Colors
                       .deepPurple
-                      .shade50, // Light purple background color
+                      .shade50, 
                   borderRadius: BorderRadius.circular(12.w),
                   boxShadow: [
                     BoxShadow(
@@ -638,7 +607,6 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 child: Obx(
                   () => Row(
-                    // Obx to react to changes in meditationController
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
@@ -656,7 +624,6 @@ class DashboardScreen extends StatelessWidget {
                                     color: Colors.black,
                                   ),
                                 ),
-                                // Three dots icon for menu
                                 Icon(
                                   Icons.more_horiz,
                                   size: 24.w,
@@ -685,7 +652,6 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 16.w),
-                      // Circular icon with emoji
                       Container(
                         width: 80.w,
                         height: 80.h,
@@ -711,7 +677,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Helper function for Calories chart bars
   Widget _buildChartBar(double heightFactor, {bool isHighlighted = false}) {
     return Container(
       width: 16.w,
@@ -733,7 +698,6 @@ class DashboardScreen extends StatelessWidget {
                 width: 5.w,
                 height: 5.w,
                 decoration: BoxDecoration(
-                  color: Colors.red,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -742,7 +706,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Helper function for Calories month labels
   Widget _buildMonthLabel(String month, {bool isHighlighted = false}) {
     return Text(
       month,

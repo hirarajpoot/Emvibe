@@ -12,27 +12,23 @@ import 'dart:async';
 import '../Models/message_model.dart';
 
 class ChatBotController extends GetxController {
-  // Text input
-  final TextEditingController inputCtrl = TextEditingController();
+  
+  final TextEditingController textController = TextEditingController(); 
 
-  // Messages
   final RxList<Message> messages = <Message>[
     Message.textMsg("Hello! How can I help you today?", isUser: false),
   ].obs;
 
-  // UI states
   final isAttachmentOpen = false.obs;
-  final isListening = false.obs; // STT
-  final isRecording = false.obs; // Voice note (simulated)
-  final isRecordingUIActive = false.obs; // Controls the recording UI visibility
+  final isListening = false.obs; 
+  final isRecording = false.obs; 
+  final isRecordingUIActive = false.obs; 
   
   final recordDurationMs = 0.obs;
-  final hasText = false.obs; // NEW: Reactive variable to check for text
+  final hasText = false.obs; 
 
-  // Speech-to-text
   late stt.SpeechToText _speech;
 
-  // Simulated recorder state
   DateTime? _recordStart;
   String? _tempRecordingPath;
   Timer? _timer;
@@ -41,15 +37,14 @@ class ChatBotController extends GetxController {
   void onInit() {
     super.onInit();
     _speech = stt.SpeechToText();
-    // NEW: Listen to changes in the text field to update the hasText variable
-    inputCtrl.addListener(() {
-      hasText.value = inputCtrl.text.trim().isNotEmpty;
+    textController.addListener(() {
+      hasText.value = textController.text.trim().isNotEmpty;
     });
   }
 
   @override
   void onClose() {
-    inputCtrl.dispose();
+    textController.dispose();
     try {
       _speech.stop();
     } catch (_) {}
@@ -60,20 +55,20 @@ class ChatBotController extends GetxController {
   void toggleAttachment() => isAttachmentOpen.toggle();
 
   void sendMessage([String? msg]) {
-    final text = (msg ?? inputCtrl.text).trim();
+    final text = (msg ?? textController.text).trim();
     if (text.isEmpty) return;
 
     messages.add(Message.textMsg(text, isUser: true));
-    inputCtrl.clear();
+    textController.clear();
 
     Future.delayed(const Duration(milliseconds: 500), () {
       messages.add(Message.textMsg("Bot reply to: $text", isUser: false));
     });
   }
 
-  // ---------- Speech-to-Text (ChatGPT style) ----------
+ 
   Future<void> startListening() async {
-    if (isListening.value) return;
+    if (isListening.value) return; 
 
     final mic = await Permission.microphone.request();
     if (mic.isDenied || mic.isPermanentlyDenied) {
@@ -87,12 +82,12 @@ class ChatBotController extends GetxController {
           log("STT STATUS: $val");
           final v = val.toLowerCase();
           if (v.contains("notlistening") || v.contains("done")) {
-            isListening.value = false;
+            isListening.value = false; 
           }
         },
         onError: (err) {
           log("STT ERROR: $err");
-          isListening.value = false;
+          isListening.value = false; 
         },
       );
 
@@ -101,18 +96,19 @@ class ChatBotController extends GetxController {
         return;
       }
 
-      inputCtrl.text = "";
-      isListening.value = true;
+      textController.text = ""; 
+      isListening.value = true; 
 
       _speech.listen(
         onResult: (result) {
           if (result.recognizedWords.isNotEmpty) {
-            inputCtrl.text = result.recognizedWords;
-            inputCtrl.selection = TextSelection.fromPosition(
-              TextPosition(offset: inputCtrl.text.length),
+            textController.text = result.recognizedWords; 
+            textController.selection = TextSelection.fromPosition(
+              TextPosition(offset: textController.text.length),
             );
           }
         },
+        listenMode: stt.ListenMode.dictation, 
       );
     } catch (e) {
       log("STT init error: $e");
@@ -122,16 +118,20 @@ class ChatBotController extends GetxController {
   }
 
   Future<void> stopListening() async {
-    if (!isListening.value) return;
+    if (!isListening.value) return; 
     try {
       await _speech.stop();
     } catch (_) {}
-    isListening.value = false;
+    isListening.value = false; 
   }
 
-  // ---------- Voice Note (WhatsApp style) ----------
+ 
   Future<void> startVoiceRecord() async {
     if (isRecording.value) return;
+
+    if (isListening.value) {
+      await stopListening();
+    }
 
     final mic = await Permission.microphone.request();
     if (mic.isDenied || mic.isPermanentlyDenied) {
@@ -210,7 +210,6 @@ class ChatBotController extends GetxController {
     stopVoiceRecord(send: false);
   }
 
-  // Attachments
   Future<void> pickFromCamera() async {
     final cameraPerm = await Permission.camera.request();
     if (cameraPerm.isDenied || cameraPerm.isPermanentlyDenied) {

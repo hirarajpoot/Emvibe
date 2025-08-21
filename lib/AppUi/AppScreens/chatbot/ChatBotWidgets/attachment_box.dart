@@ -13,8 +13,8 @@ class AttachmentBox extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomLeft,
       child: Container(
-        width: 120.w, // box ki width (jitni pehle thi utni hi rakhi)
-        margin: EdgeInsets.only(left: 12.w, bottom: 2.h), // plus icon ke upar
+        width: 120.w, 
+        margin: EdgeInsets.only(left: 12.w, bottom: 2.h), 
         padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -30,7 +30,6 @@ class AttachmentBox extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Camera option
             InkWell(
               onTap: c.pickFromCamera,
               child: Row(
@@ -50,7 +49,6 @@ class AttachmentBox extends StatelessWidget {
 
             Divider(height: 10.h, color: Colors.grey[300]),
 
-            // Document option
             InkWell(
               onTap: c.pickDocument,
               child: Row(

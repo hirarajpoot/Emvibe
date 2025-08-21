@@ -1,4 +1,3 @@
-// chat_bot_page.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +9,8 @@ import '../../AppScreens/chatbot/ChatBotWidgets/attachment_box.dart';
 import '../../AppScreens/chatbot/ChatBotWidgets/chat_input_field.dart';
 import '../../Common_Widget/top_app_bar.dart'; 
 import 'ChatBotWidgets/VoiceRecordingPanel.dart';
+import 'ChatBotWidgets/voice_to_text_mic.dart'; 
+
 class ChatBotPage extends StatelessWidget {
   const ChatBotPage({super.key});
 
@@ -20,7 +21,7 @@ class ChatBotPage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       drawer: const ChatSidebar(),
-      appBar: const TopAppBar(), // Use the reusable TopAppBar
+      appBar: const TopAppBar(), 
       body: Column(
         children: [
           Expanded(
@@ -52,32 +53,35 @@ class ChatBotPage extends StatelessWidget {
                   return Row(
                     children: [
                       Obx(() => Container(
-                            width: 42.w,
-                            height: 42.w,
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 243, 242, 242),
-                              shape: BoxShape.circle,
+                          width: 42.w,
+                          height: 42.w,
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 243, 242, 242),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              c.isAttachmentOpen.value
+                                  ? Icons.close
+                                  : Icons.add,
+                              color: Colors.black54,
+                              size: 22.w,
                             ),
-                            child: IconButton(
-                              icon: Icon(
-                                c.isAttachmentOpen.value
-                                    ? Icons.close
-                                    : Icons.add,
-                                color: Colors.black54,
-                                size: 22.w,
-                              ),
-                              onPressed: () => c.toggleAttachment(),
-                            ),
-                          )),
+                            onPressed: () => c.toggleAttachment(),
+                          ),
+                        )),
                       SizedBox(width: 8.w),
+                      const VoiceToTextMic(), 
+                      SizedBox(width: 8.w), 
                       Expanded(
                         child: ChatInputField(
+                          controller: c.textController, 
                           borderColor: Colors.grey.shade300,
                           textColor: Colors.black87,
                         ),
                       ),
                       SizedBox(width: 8.w),
-                      Container(
+                      Container( 
                         width: 42.w,
                         height: 42.w,
                         decoration: BoxDecoration(

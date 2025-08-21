@@ -21,7 +21,6 @@ class VoiceRecordingPanel extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
       child: Row(
         children: [
-          // Delete/Cancel Button
           InkWell(
             onTap: c.cancelVoiceRecord,
             borderRadius: BorderRadius.circular(21.w),
@@ -37,12 +36,10 @@ class VoiceRecordingPanel extends StatelessWidget {
           ),
           SizedBox(width: 12.w),
 
-          // Timer and Waveform (Placeholder)
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Timer
                 Obx(
                   () => Text(
                     _formatDuration(c.recordDurationMs.value),
@@ -54,7 +51,6 @@ class VoiceRecordingPanel extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
 
-                // Placeholder Waveform
                 Container(
                   height: 30.w,
                   width: 100.w,
@@ -74,7 +70,6 @@ class VoiceRecordingPanel extends StatelessWidget {
           ),
           SizedBox(width: 12.w),
 
-          // Send Button
           InkWell(
             onTap: () => c.stopVoiceRecord(send: true),
             borderRadius: BorderRadius.circular(21.w),

@@ -16,9 +16,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ScreenUtilInit makes widgets responsive across screen sizes
     return ScreenUtilInit(
-      designSize: const Size(360, 800), // base design size (mobile). adjust if you use a different design baseline
+      designSize: const Size(360, 800), 
       minTextAdapt: true,
       builder: (context, child) {
         return GetMaterialApp(
