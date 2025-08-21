@@ -3,8 +3,9 @@ class Message {
   final bool isUser;
   final DateTime time;
 
-  final String? audioPath;    
-  final int? audioDurationMs; 
+  // For voice notes
+  final String? audioPath;    // local file path if voice message
+  final int? audioDurationMs; // duration in ms
 
   Message({
     required this.text,

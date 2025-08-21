@@ -9,7 +9,7 @@ import '../../AppScreens/chatbot/ChatBotWidgets/attachment_box.dart';
 import '../../AppScreens/chatbot/ChatBotWidgets/chat_input_field.dart';
 import '../../Common_Widget/top_app_bar.dart'; 
 import 'ChatBotWidgets/VoiceRecordingPanel.dart';
-import 'ChatBotWidgets/voice_to_text_mic.dart'; 
+import 'ChatBotWidgets/voice_to_text_mic.dart'; // Naya mic widget import kiya hai
 
 class ChatBotPage extends StatelessWidget {
   const ChatBotPage({super.key});

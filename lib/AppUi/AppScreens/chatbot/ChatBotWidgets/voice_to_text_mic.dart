@@ -12,14 +12,14 @@ class VoiceToTextMic extends StatelessWidget {
     final ChatBotController c = Get.find();
 
     return Obx(() {
-      final isListening = c.isListening.value; 
+      final isListening = c.isListening.value;
 
       return GestureDetector(
         onTap: () {
           if (isListening) {
-            c.stopListening();
+            c.stopListening(); // 🔹 Manual stop only
           } else {
-            c.startListening();
+            c.startListening(); // 🔹 Manual start
           }
         },
         child: Container(

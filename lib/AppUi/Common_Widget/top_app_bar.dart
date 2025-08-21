@@ -1,132 +1,165 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../Controllers/chatbot_controller.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TopAppBar({super.key});
 
   @override
-  Size get preferredSize => Size.fromHeight(60.h);
-
-  @override
   Widget build(BuildContext context) {
+    final chatController = Get.find<ChatBotController>();
+
     return AppBar(
       backgroundColor: Colors.white,
-      elevation: 1,
-      automaticallyImplyLeading: false,
-      title: Row(
-        children: [
-          Container(
-            width: 36.w,
-            height: 36.w,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(8.w),
-            ),
-            child: Builder(
-              builder: (context) => IconButton(
-                padding: EdgeInsets.zero,
-                alignment: Alignment.center,
-                icon: Icon(Icons.menu, color: Colors.white, size: 22.w),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Row(
-            children: [
-              Container(
-                width: 26.w,
-                height: 26.w,
-                decoration: BoxDecoration(
-                  color: Colors.yellow.shade200,
-                  borderRadius: BorderRadius.circular(6.w),
-                ),
-              ),
-              SizedBox(width: 6.w),
-              Text(
-                "Miley",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          Container(
-            width: 38.w,
-            height: 38.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.purple.shade50,
-            ),
-            child: IconButton(
+      elevation: 0.5,
+      leadingWidth: 110.w,
+      leading: Builder(
+        builder: (context) => Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.menu, color: Colors.black54, size: 26),
+              onPressed: () => Scaffold.of(context).openDrawer(),
               padding: EdgeInsets.zero,
-              alignment: Alignment.center,
-              icon: Icon(Icons.search, color: Colors.black54, size: 22.w),
-              onPressed: () {},
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
             ),
-          ),
-          SizedBox(width: 4.w),
-          Container(
-            width: 38.w,
-            height: 38.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.yellow.shade100,
-            ),
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              alignment: Alignment.center,
-              icon: Icon(Icons.settings, color: Colors.black54, size: 22.w),
-              onPressed: () {},
-            ),
-          ),
-          SizedBox(width: 4.w),
-          Stack(
-            children: [
-              Container(
-                width: 38.w,
-                height: 38.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black,
-                ),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  alignment: Alignment.center,
-                  icon: Icon(Icons.notifications,
-                      color: Colors.white, size: 22.w),
-                  onPressed: () {},
-                ),
+            Container(
+              width: 16.w,
+              height: 16.w,
+              decoration: BoxDecoration(
+                color: Colors.yellow.shade200,
+                borderRadius: BorderRadius.circular(4.r),
               ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  padding: EdgeInsets.all(2.w),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(6.w),
-                  ),
-                  constraints:
-                      BoxConstraints(minWidth: 12.w, minHeight: 12.w),
-                  child: Text('2',
-                      style:
-                          TextStyle(color: Colors.white, fontSize: 8.sp)),
-                ),
+            ),
+            SizedBox(width: 6.w),
+            Text(
+              "Miley",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
               ),
-            ],
-          ),
-          SizedBox(width: 4.w),
-          CircleAvatar(
-            backgroundColor: Colors.orange,
-            child: Text("M",
-                style: TextStyle(color: Colors.white, fontSize: 18.sp)),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
+      title: null,
+      centerTitle: false,
+
+      // RIGHT SIDE - TIGHTER SPACING
+      actions: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Settings Icon
+            IconButton(
+              icon: Icon(Icons.settings, color: Colors.black54, size: 22),
+              onPressed: () {
+                Get.snackbar(
+                  "Settings",
+                  "Navigating to Settings screen!",
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+              },
+              padding: EdgeInsets.only(right: 8.w), // Reduced padding
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
+            ),
+
+            // Notification Icon
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.notifications_none,
+                    color: Colors.black54,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Get.snackbar(
+                      "Notifications",
+                      "Navigating to Notifications!",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  padding: EdgeInsets.only(right: 8.w), // Reduced padding
+                  constraints: const BoxConstraints(),
+                  visualDensity: VisualDensity.compact,
+                ),
+                Positioned(
+                  right: 10.w, // Adjusted position
+                  top: 6.h,
+                  child: Container(
+                    padding: EdgeInsets.all(2.w),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 12.w,
+                      minHeight: 12.w,
+                    ),
+                    child: Text(
+                      '2',
+                      style: TextStyle(color: Colors.white, fontSize: 8.sp),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Avatar
+            Padding(
+              padding: EdgeInsets.only(right: 8.w), // Reduced padding
+              child: CircleAvatar(
+                radius: 14,
+                backgroundColor: Colors.orange,
+                child: Text(
+                  "M",
+                  style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                ),
+              ),
+            ),
+
+            // New Chat Button - Moved closer to other icons
+            Container(
+              margin: EdgeInsets.only(right: 12.w), // Reduced margin
+              child: ElevatedButton(
+                onPressed: () {
+                  chatController.startNewChat();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6.r),
+                  ),
+                  elevation: 0,
+                  minimumSize: Size(60.w, 28.h),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(
+                  "New Chat",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

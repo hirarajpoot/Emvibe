@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart'; 
-import 'dart:math' as math; 
+import 'package:get/get.dart';
+import 'dart:math' as math;
 
 import '../../Common_Widget/top_app_bar.dart';
 import '../Chatbot/ChatBotWidgets/chat_sidebar.dart';
@@ -82,7 +82,7 @@ class HabitController extends GetxController {
 }
 
 class DailyProgressController extends GetxController {
-  var dailyProgressPercentage = 85.obs; 
+  var dailyProgressPercentage = 85.obs;
   var message = "Keep working on your nutrition\nand sleep".obs;
 
   void updateDailyProgress(int newPercentage, String newMessage) {
@@ -95,9 +95,8 @@ class MeditationController extends GetxController {
   var title = "Meditation".obs;
   var subtitle = "Good vibes, good life".obs;
   var details = "positive thinking | 27min".obs;
-  var iconEmoji = "🧘‍♀️".obs; 
-  var iconBackgroundColor =
-      Colors.deepPurple.shade200.obs; 
+  var iconEmoji = "🧘‍♀️".obs;
+  var iconBackgroundColor = Colors.deepPurple.shade200.obs;
 
   void updateMeditationDetails({
     String? newTitle,
@@ -169,7 +168,6 @@ class DashboardScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                           
                             SizedBox(width: 4.w),
                             Text(
                               "Month",
@@ -179,7 +177,7 @@ class DashboardScreen extends StatelessWidget {
                               ),
                             ),
                             Icon(
-                              Icons.arrow_drop_down, 
+                              Icons.arrow_drop_down,
                               size: 20.w,
                               color: Colors.grey.shade600,
                             ),
@@ -190,7 +188,7 @@ class DashboardScreen extends StatelessWidget {
                     SizedBox(height: 16.h),
 
                     SizedBox(
-                      height: 150.h, 
+                      height: 150.h,
                       child: Column(
                         children: [
                           Expanded(
@@ -198,29 +196,22 @@ class DashboardScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                _buildChartBar(0.6), 
-                                _buildChartBar(0.4), 
-                                _buildChartBar(0.7), 
-                                _buildChartBar(0.5), 
-                                _buildChartBar(0.3), 
-                                _buildChartBar(0.65), 
-                                _buildChartBar(0.7), 
-                                _buildChartBar(
-                                  0.55,
-                                ), 
-                                _buildChartBar(
-                                  0.9,
-                                  isHighlighted: true,
-                                ), 
-                                _buildChartBar(0.45), 
-                                _buildChartBar(0.3), 
-                                _buildChartBar(0.6), 
+                                _buildChartBar(0.6),
+                                _buildChartBar(0.4),
+                                _buildChartBar(0.7),
+                                _buildChartBar(0.5),
+                                _buildChartBar(0.3),
+                                _buildChartBar(0.65),
+                                _buildChartBar(0.7),
+                                _buildChartBar(0.55),
+                                _buildChartBar(0.9, isHighlighted: true),
+                                _buildChartBar(0.45),
+                                _buildChartBar(0.3),
+                                _buildChartBar(0.6),
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: 8.h,
-                          ), 
+                          SizedBox(height: 8.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -232,17 +223,13 @@ class DashboardScreen extends StatelessWidget {
                               _buildMonthLabel("Jun"),
                               _buildMonthLabel("Jul"),
                               _buildMonthLabel("Aug"),
-                              _buildMonthLabel(
-                                "Sep",
-                              ), 
+                              _buildMonthLabel("Sep"),
                               _buildMonthLabel("Oct"),
                               _buildMonthLabel("Nov"),
                               _buildMonthLabel("Dec"),
                             ],
                           ),
-                          SizedBox(
-                            height: 4.h,
-                          ), 
+                          SizedBox(height: 4.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children:
@@ -253,14 +240,9 @@ class DashboardScreen extends StatelessWidget {
                                       _buildValueLabel("1500"),
                                       _buildValueLabel("2000"),
                                     ]
-                                    .expand(
-                                      (widget) => [
-                                        widget,
-                                        Spacer(), 
-                                      ],
-                                    )
+                                    .expand((widget) => [widget, Spacer()])
                                     .toList()
-                                  ..removeLast(), 
+                                  ..removeLast(),
                           ),
                         ],
                       ),
@@ -308,7 +290,7 @@ class DashboardScreen extends StatelessWidget {
                               ),
                             ),
                             Icon(
-                              Icons.arrow_drop_down, 
+                              Icons.arrow_drop_down,
                               size: 20.w,
                               color: Colors.grey.shade600,
                             ),
@@ -334,7 +316,7 @@ class DashboardScreen extends StatelessWidget {
                             icon: Icons.show_chart,
                             iconColor: Colors.black,
                             value: "${activityController.totalSteps.value}",
-                            unit: "", 
+                            unit: "",
                             valueColor: Colors.black,
                             label: "Total steps",
                           ),
@@ -349,7 +331,7 @@ class DashboardScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 25.h), 
+                    SizedBox(height: 25.h),
                     Obx(
                       () => Column(
                         children: [
@@ -377,7 +359,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30.h), 
+              SizedBox(height: 30.h),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
@@ -507,9 +489,8 @@ class DashboardScreen extends StatelessWidget {
                               habit['time'],
                               habit['location'],
                               habit['duration'],
-                              habit['isCompleted'].value, 
-                              habitController
-                                  .toggleHabitCompletion, 
+                              habit['isCompleted'].value,
+                              habitController.toggleHabitCompletion,
                             ),
                           );
                         }).toList(),
@@ -519,7 +500,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30.h), 
+              SizedBox(height: 30.h),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
@@ -548,7 +529,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 20.h),
                       SizedBox(
-                        width: 120.w, 
+                        width: 120.w,
                         height: 120.h,
                         child: CustomPaint(
                           painter: _CircularProgressPainter(
@@ -556,7 +537,7 @@ class DashboardScreen extends StatelessWidget {
                                 dailyProgressController
                                     .dailyProgressPercentage
                                     .value /
-                                100, 
+                                100,
                             color: Colors.deepPurple.shade300,
                             backgroundColor: Colors.grey.shade200,
                             strokeWidth: 10.w,
@@ -587,14 +568,12 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30.h), 
+              SizedBox(height: 30.h),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
-                  color: Colors
-                      .deepPurple
-                      .shade50, 
+                  color: Colors.deepPurple.shade50,
                   borderRadius: BorderRadius.circular(12.w),
                   boxShadow: [
                     BoxShadow(
@@ -697,9 +676,7 @@ class DashboardScreen extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 5.h),
                 width: 5.w,
                 height: 5.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle),
               ),
             )
           : null,
