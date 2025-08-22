@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../Controllers/chatbot_controller.dart';
+import '../AppScreens/chatbot/PersonaSettingsPage.dart'; // 🔥 NEW: PersonaSettingsPage ko import karein
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TopAppBar({super.key});
@@ -56,11 +57,8 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
               icon: Icon(Icons.settings, color: Colors.black54, size: 22),
               onPressed: () {
-                Get.snackbar(
-                  "Settings",
-                  "Navigating to Settings screen!",
-                  snackPosition: SnackPosition.BOTTOM,
-                );
+                // 🔥 FIX: Directly navigate to PersonaSettingsPage, no snackbar
+                Get.to(() => const PersonaSettingsPage());
               },
               padding: EdgeInsets.only(right: 8.w), // Reduced padding
               constraints: const BoxConstraints(),
@@ -78,11 +76,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
                     size: 24,
                   ),
                   onPressed: () {
-                    Get.snackbar(
-                      "Notifications",
-                      "Navigating to Notifications!",
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
+                    // Removed snackbar here as per previous instructions
                   },
                   padding: EdgeInsets.only(right: 8.w), // Reduced padding
                   constraints: const BoxConstraints(),

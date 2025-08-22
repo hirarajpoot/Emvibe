@@ -8,21 +8,23 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
+// import 'package:collection/collection.dart';
+import 'package:share_plus/share_plus.dart'; // 🔥 YEH LINE ZAROOR HONI CHAHIYE 🔥
 
 import '../Models/message_model.dart';
+import '../Models/chat_session_model.dart'; 
 
 class ChatBotController extends GetxController {
   final TextEditingController textController = TextEditingController();
 
-  // Active chat messages
   final RxList<Message> messages = <Message>[
     Message.textMsg("Hello! How can I help you today?", isUser: false),
   ].obs;
 
-  // Chat history (list of sessions)
-  final RxList<List<Message>> chatHistory = <List<Message>>[].obs;
-  // Current active chat session index. -1 means no specific session loaded.
+  final RxList<ChatSession> chatHistory = <ChatSession>[].obs;
   final RxInt currentChatSessionIndex = RxInt(-1); 
+
+  final RxString currentPersona = 'Friendly'.obs;
 
   final isAttachmentOpen = false.obs;
   final isListening = false.obs;
@@ -69,81 +71,129 @@ class ChatBotController extends GetxController {
     });
   }
 
-  // ---------- CHAT HISTORY SYSTEM (Improved Logic) ----------
+  // ---------- CHAT HISTORY SYSTEM ----------
 
-  // Saves/Updates the current chat to history
   void saveCurrentChatToHistory() {
     if (messages.length > 1) { 
-      final currentChatMessages = List<Message>.from(messages);
+      final currentChatMessages = List<Message>.from(messages); 
+
       if (currentChatSessionIndex.value != -1 && currentChatSessionIndex.value < chatHistory.length) {
-        // Existing session ko update karein
-        chatHistory[currentChatSessionIndex.value] = currentChatMessages;
+        chatHistory[currentChatSessionIndex.value].updateMessages(currentChatMessages);
       } else {
-        // Naya session add karein
-        chatHistory.add(currentChatMessages);
-        currentChatSessionIndex.value = chatHistory.length - 1; 
+        final newSession = ChatSession(
+          messages: currentChatMessages,
+        );
+        chatHistory.add(newSession);
+        currentChatSessionIndex.value = chatHistory.length - 1;
       }
     }
   }
 
-  // Loads a specific chat from history
   void loadChatFromHistory(int index) {
     if (index >= 0 && index < chatHistory.length) {
-      saveCurrentChatToHistory(); // 🔥 IMPORTANT: Pehle current chat ko save karein
-      messages.assignAll(chatHistory[index]); // Purani chat ko load karein
-      currentChatSessionIndex.value = index; // Update current session index
-      textController.clear(); // Input field clear karein
+      saveCurrentChatToHistory();
+      messages.assignAll(chatHistory[index].messages);
+      currentChatSessionIndex.value = index;
+      textController.clear();
     } else {
       log("Error: Invalid chat session index $index for loading.");
     }
   }
 
-  // Provides access to chat history for UI
-  RxList<List<Message>> getAllChatSessions() {
-    return chatHistory;
+  RxList<ChatSession> getSortedChatSessions() {
+    final List<ChatSession> sortedList = List<ChatSession>.from(chatHistory);
+    sortedList.sort((a, b) {
+      if (a.isPinned.value && !b.isPinned.value) return -1; 
+      if (!a.isPinned.value && b.isPinned.value) return 1;  
+      return 0; 
+    });
+    return sortedList.obs; 
   }
 
-  // Clears all chat history
   void clearChatHistory() {
-    chatHistory.clear(); // Saari saved sessions clear karein
-    messages.clear(); // Current chat screen ko bhi clear karein
-    textController.clear(); // Input field clear karein
-    currentChatSessionIndex.value = -1; // Reset current session index
-    messages.add(Message.textMsg("Hello! How can I help you today?", isUser: false)); // New greeting for current screen
+    final List<ChatSession> pinnedChats = chatHistory.where((session) => session.isPinned.value).toList();
+    
+    if (currentChatSessionIndex.value != -1 && 
+        currentChatSessionIndex.value < chatHistory.length &&
+        !chatHistory[currentChatSessionIndex.value].isPinned.value) {
+      messages.clear();
+      messages.add(Message.textMsg("Hello! How can I help you today?", isUser: false));
+      currentChatSessionIndex.value = -1;
+    } else if (currentChatSessionIndex.value != -1 && 
+               currentChatSessionIndex.value < chatHistory.length &&
+               chatHistory[currentChatSessionIndex.value].isPinned.value) {
+      final currentActivePinnedSession = chatHistory[currentChatSessionIndex.value];
+      final newIndex = pinnedChats.indexOf(currentActivePinnedSession);
+      currentChatSessionIndex.value = newIndex;
+    } else { 
+      messages.clear();
+      messages.add(Message.textMsg("Hello! How can I help you today?", isUser: false));
+      currentChatSessionIndex.value = -1;
+    }
+
+    chatHistory.assignAll(pinnedChats); 
   }
 
-  // 🔥 NEW: Function to delete a specific chat session by index
-  void deleteChatSession(int index) {
-    if (index >= 0 && index < chatHistory.length) {
-      // Agar current loaded session delete ho rahi hai
+  void deleteChatSession(ChatSession sessionToDelete) {
+    final int index = chatHistory.indexOf(sessionToDelete); 
+    if (index != -1) {
       if (currentChatSessionIndex.value == index) {
-        // Current chat ko bhi clear kar do aur naya session shuru kar do
         messages.clear();
         messages.add(Message.textMsg("Hello! How can I help you today?", isUser: false));
-        currentChatSessionIndex.value = -1; // No session loaded
+        currentChatSessionIndex.value = -1; 
       } else if (currentChatSessionIndex.value > index) {
-        // Agar deleted session current session se pehle thi, toh index adjust karo
         currentChatSessionIndex.value--;
       }
-      chatHistory.removeAt(index); // Session ko list se delete karein
-      // Get.snackbar("Chat Deleted", "Chat session deleted successfully!", snackPosition: SnackPosition.BOTTOM);
-      // Ensure UI updates if needed (Obx will handle for chatHistory list)
+      chatHistory.removeAt(index); 
     } else {
-      Get.snackbar("Error", "Invalid chat session to delete!", snackPosition: SnackPosition.BOTTOM);
-      log("Error: Invalid chat session index $index for deletion.");
+      log("Error: Session not found for deletion.");
     }
   }
 
-  // Starts a new chat session
+  void renameChatSession(ChatSession sessionToRename, String newName) {
+    final int index = chatHistory.indexOf(sessionToRename);
+    if (index != -1) {
+      sessionToRename.updateTitle(newName); 
+    } else {
+      log("Error: Session not found for renaming.");
+    }
+  }
+
+  void togglePinStatus(ChatSession sessionToToggle) {
+    final int index = chatHistory.indexOf(sessionToToggle);
+    if (index != -1) {
+      sessionToToggle.isPinned.toggle(); 
+      chatHistory.refresh(); 
+    } else {
+      log("Error: Session not found for pinning/unpinning.");
+    }
+  }
+
+  // 🔥 YEH FUNCTION AB DOBARA YAHAN HAI 🔥
+  Future<void> shareChatSession(ChatSession sessionToShare) async {
+    final StringBuffer chatContent = StringBuffer();
+    chatContent.writeln("Chat Title: ${sessionToShare.customTitle.value}\n");
+    
+    for (final message in sessionToShare.messages) {
+      if (message.isUser) {
+        chatContent.writeln("You: ${message.text}");
+      } else {
+        chatContent.writeln("Bot: ${message.text}");
+      }
+    }
+    await Share.share(chatContent.toString()); // Native share dialog open karega
+  }
+
+
   void startNewChat() {
-    saveCurrentChatToHistory(); // Naya chat shuru karne se pehle current chat ko save karein
+    saveCurrentChatToHistory();
 
     messages.clear(); 
     textController.clear(); 
     messages.add(
       Message.textMsg("Hello! How can I help you today?", isUser: false),
     );
-    currentChatSessionIndex.value = -1; // New chat means no specific historical session
+    currentChatSessionIndex.value = -1; 
 
     if (isListening.value) {
       stopListening();
@@ -153,7 +203,13 @@ class ChatBotController extends GetxController {
     }
   }
 
-  // ---------- Speech-to-Text ----------
+  // 🔥 Function to update the selected persona
+  void updatePersona(String newPersona) {
+    currentPersona.value = newPersona;
+    log("Persona changed to: ${currentPersona.value}");
+  }
+
+  // ---------- Speech-to-Text (No changes) ----------
   Future<void> startListening() async {
     if (isListening.value) return;
 
@@ -212,7 +268,7 @@ class ChatBotController extends GetxController {
     isListening.value = false;
   }
 
-  // ---------- Voice Note ----------
+  // ---------- Voice Note (No changes) ----------
   Future<void> startVoiceRecord() async {
     if (isRecording.value) return;
 
@@ -304,7 +360,7 @@ class ChatBotController extends GetxController {
     stopVoiceRecord(send: false);
   }
 
-  // Attachments
+  // Attachments (No changes)
   Future<void> pickFromCamera() async {
     final cameraPerm = await Permission.camera.request();
     if (cameraPerm.isDenied || cameraPerm.isPermanentlyDenied) {
@@ -327,7 +383,6 @@ class ChatBotController extends GetxController {
     isAttachmentOpen.value = false;
   }
 
-  // void _snack(String msg) {
-  //   // This function is empty as per previous instruction to remove snackbars.
-  // }
+  void _snack(String msg) {
+  }
 }
