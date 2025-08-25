@@ -3,10 +3,11 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.emvibe"
+    namespace = "com.softedigi.emvibe"
     compileSdk = flutter.compileSdkVersion
 
     // 🔥 Force correct NDK version (instead of flutter.ndkVersion)
@@ -22,7 +23,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.emvibe"
+        applicationId = "com.softedigi.emvibe"
         // YAHAN PE CHANGE KARO: minSdk 23 karo
         minSdk = 23  // flutter.minSdkVersion ki jagah directly 23
         targetSdk = flutter.targetSdkVersion

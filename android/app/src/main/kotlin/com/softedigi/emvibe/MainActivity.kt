@@ -1,4 +1,4 @@
-package com.example.emvibe
+package com.softedigi.emvibe
 
 import io.flutter.embedding.android.FlutterActivity
 

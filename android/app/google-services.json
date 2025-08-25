@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "695581330081",
+    "project_id": "emvibe-eba0b",
+    "storage_bucket": "emvibe-eba0b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695581330081:android:55976cd724bab723e3bee0",
+        "android_client_info": {
+          "package_name": "com.softedigi.emvibe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "695581330081-l50jef71aeu7fua300mmlvp4n2e2egpa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.softedigi.emvibe",
+            "certificate_hash": "18d0d449666a9af3ce6f2c36e4d62bab7d15ec51"
+          }
+        },
+        {
+          "client_id": "695581330081-utb5h0a57vfu6fhlrntbilbk4jg4meoi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOg7g6ddPAicelGoC8lp0FpcnWYPVTo_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "695581330081-utb5h0a57vfu6fhlrntbilbk4jg4meoi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
