@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../../chatbot/chatbot_page.dart';
 import '../../DashboardScreen/dashboard_screen.dart';
 import '../../../Controllers/chatbot_controller.dart'; 
-// import '../../../Models/chat_session_model.dart'; 
 
 class ChatSidebar extends StatelessWidget {
   const ChatSidebar({super.key});

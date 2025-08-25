@@ -17,9 +17,9 @@ class VoiceToTextMic extends StatelessWidget {
       return GestureDetector(
         onTap: () {
           if (isListening) {
-            c.stopListening(); // 🔹 Manual stop only
+            c.stopListening(); 
           } else {
-            c.startListening(); // 🔹 Manual start
+            c.startListening(); 
           }
         },
         child: Container(

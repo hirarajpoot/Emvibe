@@ -8,8 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
-// import 'package:collection/collection.dart';
-import 'package:share_plus/share_plus.dart'; // 🔥 YEH LINE ZAROOR HONI CHAHIYE 🔥
+import 'package:share_plus/share_plus.dart'; 
 
 import '../Models/message_model.dart';
 import '../Models/chat_session_model.dart'; 
@@ -169,7 +168,6 @@ class ChatBotController extends GetxController {
     }
   }
 
-  // 🔥 YEH FUNCTION AB DOBARA YAHAN HAI 🔥
   Future<void> shareChatSession(ChatSession sessionToShare) async {
     final StringBuffer chatContent = StringBuffer();
     chatContent.writeln("Chat Title: ${sessionToShare.customTitle.value}\n");
@@ -181,7 +179,7 @@ class ChatBotController extends GetxController {
         chatContent.writeln("Bot: ${message.text}");
       }
     }
-    await Share.share(chatContent.toString()); // Native share dialog open karega
+    await Share.share(chatContent.toString()); 
   }
 
 
@@ -203,13 +201,12 @@ class ChatBotController extends GetxController {
     }
   }
 
-  // 🔥 Function to update the selected persona
   void updatePersona(String newPersona) {
     currentPersona.value = newPersona;
     log("Persona changed to: ${currentPersona.value}");
   }
 
-  // ---------- Speech-to-Text (No changes) ----------
+  // ---------- Speech-to-Text  ----------
   Future<void> startListening() async {
     if (isListening.value) return;
 
@@ -268,7 +265,7 @@ class ChatBotController extends GetxController {
     isListening.value = false;
   }
 
-  // ---------- Voice Note (No changes) ----------
+  // ---------- Voice Note ----------
   Future<void> startVoiceRecord() async {
     if (isRecording.value) return;
 
@@ -360,7 +357,7 @@ class ChatBotController extends GetxController {
     stopVoiceRecord(send: false);
   }
 
-  // Attachments (No changes)
+  
   Future<void> pickFromCamera() async {
     final cameraPerm = await Permission.camera.request();
     if (cameraPerm.isDenied || cameraPerm.isPermanentlyDenied) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../Controllers/chatbot_controller.dart';
-import '../AppScreens/chatbot/PersonaSettingsPage.dart'; // 🔥 NEW: PersonaSettingsPage ko import karein
+import '../AppScreens/chatbot/PersonaSettingsPage.dart'; 
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TopAppBar({super.key});
@@ -48,24 +48,20 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: null,
       centerTitle: false,
 
-      // RIGHT SIDE - TIGHTER SPACING
       actions: [
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Settings Icon
             IconButton(
               icon: Icon(Icons.settings, color: Colors.black54, size: 22),
               onPressed: () {
-                // 🔥 FIX: Directly navigate to PersonaSettingsPage, no snackbar
                 Get.to(() => const PersonaSettingsPage());
               },
-              padding: EdgeInsets.only(right: 8.w), // Reduced padding
+              padding: EdgeInsets.only(right: 8.w), 
               constraints: const BoxConstraints(),
               visualDensity: VisualDensity.compact,
             ),
 
-            // Notification Icon
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -76,14 +72,13 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
                     size: 24,
                   ),
                   onPressed: () {
-                    // Removed snackbar here as per previous instructions
                   },
-                  padding: EdgeInsets.only(right: 8.w), // Reduced padding
+                  padding: EdgeInsets.only(right: 8.w), 
                   constraints: const BoxConstraints(),
                   visualDensity: VisualDensity.compact,
                 ),
                 Positioned(
-                  right: 10.w, // Adjusted position
+                  right: 10.w, 
                   top: 6.h,
                   child: Container(
                     padding: EdgeInsets.all(2.w),
@@ -105,9 +100,8 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
               ],
             ),
 
-            // Avatar
             Padding(
-              padding: EdgeInsets.only(right: 8.w), // Reduced padding
+              padding: EdgeInsets.only(right: 8.w), 
               child: CircleAvatar(
                 radius: 14,
                 backgroundColor: Colors.orange,
@@ -120,7 +114,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
 
             // New Chat Button - Moved closer to other icons
             Container(
-              margin: EdgeInsets.only(right: 12.w), // Reduced margin
+              margin: EdgeInsets.only(right: 12.w), 
               child: ElevatedButton(
                 onPressed: () {
                   chatController.startNewChat();

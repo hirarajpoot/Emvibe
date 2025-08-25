@@ -26,13 +26,13 @@ class ChatInputField extends StatelessWidget {
 
       return ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: 80.h, // 👈 max 4 lines approx
+          maxHeight: 80.h, 
         ),
         child: Scrollbar(
           child: TextField(
             controller: controller,
             minLines: 1,
-            maxLines: null, // allow multiple lines
+            maxLines: null, 
             keyboardType: TextInputType.multiline,
             style: TextStyle(fontSize: 14.sp, color: textColor),
             decoration: InputDecoration(
