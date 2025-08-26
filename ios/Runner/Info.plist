@@ -51,5 +51,7 @@
 <string>This app needs access to your camera to capture and send photos.</string>
 <key>NSPhotoLibraryUsageDescription</key>
 <string>This app needs access to your photo library to pick and send photos.</string>
+<!-- <key>NSMicrophoneUsageDescription</key>
+<string>This app needs access to your microphone to convert your speech to text.</string> -->
 </dict>
 </plist>

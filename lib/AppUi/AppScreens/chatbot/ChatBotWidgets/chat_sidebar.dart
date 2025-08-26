@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart'; 
+import 'dart:math'; 
 
 import '../../chatbot/chatbot_page.dart';
 import '../../DashboardScreen/dashboard_screen.dart';
 import '../../../Controllers/chatbot_controller.dart'; 
+import '../../Auth/ProfileScreen.dart'; 
 
 class ChatSidebar extends StatelessWidget {
   const ChatSidebar({super.key});
+
+  Color _generateRandomColor() {
+    Random random = Random();
+    return Color.fromARGB(
+      255,
+      random.nextInt(200) + 50,
+      random.nextInt(200) + 50,
+      random.nextInt(200) + 50,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +103,8 @@ class ChatSidebar extends StatelessWidget {
                                     final chatSession = sortedChatSessions[index]; 
                                     
                                     final isSelected = c.currentChatSessionIndex.value != -1 &&
-                                                       c.chatHistory.isNotEmpty && 
-                                                       c.currentChatSessionIndex.value < c.chatHistory.length &&
-                                                       c.chatHistory[c.currentChatSessionIndex.value] == chatSession;
+                                            c.chatHistory.isNotEmpty && 
+                                            c.chatHistory[c.currentChatSessionIndex.value].id == chatSession.id;
                                     
                                     return Obx(() => _sidebarItem( 
                                       context, 
@@ -282,14 +295,53 @@ class ChatSidebar extends StatelessWidget {
                 ),
               ),
 
-              ListTile(
-                leading: const Icon(Icons.logout, color: Colors.white),
-                title: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  
+              // 🔥 Profile Avatar aur User Name display
+              StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(), 
+                builder: (context, snapshot) {
+                  String firstLetter = 'G'; 
+                  Color avatarColor = Colors.grey.shade400; 
+                  String userName = "Profile"; // 🔥 Default text agar user data nahi hai
+
+                  if (snapshot.connectionState == ConnectionState.active && snapshot.hasData) {
+                    final User? user = snapshot.data;
+                    if (user != null) {
+                      if (user.displayName != null && user.displayName!.isNotEmpty) {
+                        userName = user.displayName!;
+                        firstLetter = user.displayName![0].toUpperCase();
+                      } else if (user.email != null && user.email!.isNotEmpty) {
+                        userName = user.email!.split('@')[0]; // Email se username nikala
+                        firstLetter = user.email![0].toUpperCase();
+                      }
+                      avatarColor = _generateRandomColor();
+                    }
+                  } else {
+                    // Agar user logged out hai ya data abhi nahi aaya
+                    firstLetter = 'G';
+                    avatarColor = Colors.grey.shade400;
+                    userName = "Guest"; // 🔥 Default text agar logged out
+                  }
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                      radius: 14, 
+                      backgroundColor: avatarColor,
+                      child: Text(
+                        firstLetter,
+                        style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    // 🔥 Title ko user name ya "Guest" se replace kiya
+                    title: Text(
+                      userName, 
+                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop(); 
+                      Get.to(() => const ProfileScreen()); 
+                    },
+                    trailing: Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16.w), 
+                  );
                 },
               ),
             ],

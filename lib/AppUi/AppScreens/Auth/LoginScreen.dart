@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // 🔥 FontAwesomeIcons import zaroori hai
+// 🔥 TapGestureRecognizer ka import hata diya gaya hai, kyunki ab text ke bajaye button hai
 
 import 'SignupScreen.dart';
 import 'ResetPasswordScreen.dart';
@@ -13,12 +14,17 @@ class LoginController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final isLoading = false.obs;
+  final RxBool _isPasswordVisible = false.obs;
 
   final RxString emailError = ''.obs;
   final RxString passwordError = ''.obs;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  bool get isPasswordVisible => _isPasswordVisible.value;
+  void togglePasswordVisibility() =>
+      _isPasswordVisible.value = !_isPasswordVisible.value;
 
   @override
   void onClose() {
@@ -68,7 +74,7 @@ class LoginController extends GetxController {
         backgroundColor: Colors.green.withOpacity(0.8),
         colorText: Colors.white,
       );
-      Get.offAll(() => const ChatBotPage()); 
+      Get.offAll(() => const ChatBotPage());
     } on FirebaseAuthException catch (e) {
       String genericErrorMessage = "Login failed. Please try again.";
       if (e.code == 'user-not-found') {
@@ -81,7 +87,7 @@ class LoginController extends GetxController {
         emailError.value = "The email address is not valid.";
         genericErrorMessage = "";
       } else if (e.code == 'channel-error') {
-         genericErrorMessage = "Login failed. Please check your setup.";
+        genericErrorMessage = "Login failed. Please check your setup.";
       }
 
       if (genericErrorMessage.isNotEmpty) {
@@ -115,7 +121,8 @@ class LoginController extends GetxController {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -180,21 +187,21 @@ class LoginScreen extends StatelessWidget {
     final LoginController loginController = Get.put(LoginController());
 
     return Scaffold(
-      backgroundColor: Color(0xFFF0F4F8), 
+      backgroundColor: Color(0xFFF0F4F8),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch, 
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 50.h), 
+              SizedBox(height: 50.h),
               Align(
                 alignment: Alignment.center,
                 child: Text(
                   "Emvibe",
                   style: TextStyle(
-                    color: Color(0xFF1A237E), 
+                    color: Color(0xFF1A237E),
                     fontSize: 32.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -204,7 +211,7 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 50.h),
 
               Align(
-                alignment: Alignment.centerLeft, 
+                alignment: Alignment.centerLeft,
                 child: Text(
                   "Login to your Account",
                   style: TextStyle(
@@ -216,82 +223,110 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 30.h),
 
-              Obx(() => Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), 
+              // Email Input with custom box decoration and inline error
+              Obx(
+                () => Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: loginController.emailError.value.isNotEmpty
+                          ? Colors.red
+                          : Colors.transparent, // Default no border
+                      width: 1.5,
                     ),
-                  ],
-                  border: Border.all(
-                    color: loginController.emailError.value.isNotEmpty
-                        ? Colors.red
-                        : loginController.emailController.text.isNotEmpty
-                            ? Colors.transparent 
-                            : Colors.transparent, 
-                    width: 1.5,
+                  ),
+                  child: TextField(
+                    controller: loginController.emailController,
+                    style: TextStyle(color: Colors.black, fontSize: 16.sp),
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (value) => loginController.emailError.value = '',
+                    decoration: InputDecoration(
+                      labelText: "Email",
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Colors.grey.shade500,
+                      ), // 🔥 Email Icon
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 14.h,
+                        horizontal: 16.w,
+                      ),
+                      border: InputBorder.none,
+                      errorText: loginController.emailError.value.isEmpty
+                          ? null
+                          : loginController.emailError.value,
+                      errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
+                    ),
                   ),
                 ),
-                child: TextField(
-                  controller: loginController.emailController,
-                  style: TextStyle(color: Colors.black, fontSize: 16.sp),
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) => loginController.emailError.value = '',
-                  decoration: InputDecoration(
-                    labelText: "Email",
-                    contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w), 
-                    border: InputBorder.none, 
-                    errorText: loginController.emailError.value.isEmpty
-                        ? null
-                        : loginController.emailError.value,
-                    errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
-                  ),
-                ),
-              )),
+              ),
               SizedBox(height: 16.h),
 
-              Obx(() => Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
+              // Password Input with custom box decoration, inline error, and toggle
+              Obx(
+                () => Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: loginController.passwordError.value.isNotEmpty
+                          ? Colors.red
+                          : Colors.transparent, // Default no border
+                      width: 1.5,
                     ),
-                  ],
-                  border: Border.all(
-                    color: loginController.passwordError.value.isNotEmpty
-                        ? Colors.red
-                        : loginController.passwordController.text.isNotEmpty
-                            ? Colors.transparent
-                            : Colors.transparent,
-                    width: 1.5,
+                  ),
+                  child: TextField(
+                    controller: loginController.passwordController,
+                    style: TextStyle(color: Colors.black, fontSize: 16.sp),
+                    obscureText: !loginController
+                        .isPasswordVisible, // 🔥 Toggle visibility
+                    onChanged: (value) =>
+                        loginController.passwordError.value = '',
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Colors.grey.shade500,
+                      ), // 🔥 Password Icon
+                      suffixIcon: IconButton(
+                        // 🔥 Show/Hide Password Icon
+                        icon: Icon(
+                          loginController.isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.grey.shade500,
+                        ),
+                        onPressed: loginController.togglePasswordVisibility,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 14.h,
+                        horizontal: 16.w,
+                      ),
+                      border: InputBorder.none,
+                      errorText: loginController.passwordError.value.isEmpty
+                          ? null
+                          : loginController.passwordError.value,
+                      errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
+                    ),
                   ),
                 ),
-                child: TextField(
-                  controller: loginController.passwordController,
-                  style: TextStyle(color: Colors.black, fontSize: 16.sp),
-                  obscureText: true,
-                  onChanged: (value) => loginController.passwordError.value = '',
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w), 
-                    border: InputBorder.none,
-                    errorText: loginController.passwordError.value.isEmpty
-                        ? null
-                        : loginController.passwordError.value,
-                    errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
-                  ),
-                ),
-              )),
+              ),
               SizedBox(height: 20.h),
 
               Align(
@@ -308,15 +343,23 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 20.h),
 
-              Obx(() => ElevatedButton(
-                onPressed: loginController.isLoading.value ? null : () => loginController.loginUser(),
-                child: loginController.isLoading.value
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                        "Sign In",
-                        style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
-                      ),
-              )),
+              Obx(
+                () => ElevatedButton(
+                  onPressed: loginController.isLoading.value
+                      ? null
+                      : () => loginController.loginUser(),
+                  child: loginController.isLoading.value
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          "Sign In",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
               SizedBox(height: 30.h),
 
               Row(
@@ -326,7 +369,10 @@ class LoginScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     child: Text(
                       "Or sign in with",
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 14.sp),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 14.sp,
+                      ),
                     ),
                   ),
                   Expanded(child: Divider(color: Colors.grey.shade300)),
@@ -338,27 +384,45 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildSocialButton(
-                    onPressed: loginController.isLoading.value ? null : () => loginController.signInWithGoogle(),
+                    onPressed: loginController.isLoading.value
+                        ? null
+                        : () => loginController.signInWithGoogle(),
                     icon: Image.network(
                       "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png",
                       height: 24.w,
                       width: 24.w,
-                      errorBuilder: (context, error, stackTrace) => Icon(Icons.g_mobiledata, size: 30.w, color: Colors.red),
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.g_mobiledata,
+                        size: 30.w,
+                        color: Colors.red,
+                      ),
                     ),
                     heroTag: "googleLogin",
                   ),
                   SizedBox(width: 20.w),
 
                   _buildSocialButton(
-                    onPressed: loginController.isLoading.value ? null : () => loginController.signInWithFacebook(),
-                    icon: Icon(FontAwesomeIcons.facebookF, color: Colors.blue.shade800, size: 24.w),
+                    onPressed: loginController.isLoading.value
+                        ? null
+                        : () => loginController.signInWithFacebook(),
+                    icon: Icon(
+                      FontAwesomeIcons.facebookF,
+                      color: Colors.blue.shade800,
+                      size: 24.w,
+                    ),
                     heroTag: "facebookLogin",
                   ),
                   SizedBox(width: 20.w),
 
                   _buildSocialButton(
-                    onPressed: loginController.isLoading.value ? null : () => loginController.signInWithX(),
-                    icon: Icon(FontAwesomeIcons.xTwitter, color: Colors.black, size: 24.w),
+                    onPressed: loginController.isLoading.value
+                        ? null
+                        : () => loginController.signInWithX(),
+                    icon: Icon(
+                      FontAwesomeIcons.xTwitter,
+                      color: Colors.black,
+                      size: 24.w,
+                    ),
                     heroTag: "xLogin",
                   ),
                 ],
@@ -372,7 +436,10 @@ class LoginScreen extends StatelessWidget {
                 child: Text.rich(
                   TextSpan(
                     text: "Don't have an account? ",
-                    style: TextStyle(color: Colors.grey.shade700, fontSize: 14.sp),
+                    style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontSize: 14.sp,
+                    ),
                     children: [
                       TextSpan(
                         text: "Sign Up",
@@ -394,10 +461,15 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialButton({VoidCallback? onPressed, required Widget icon, required String heroTag}) {
+  // 🔥 _buildSocialButton helper widget yahan dobara add kiya gaya hai
+  Widget _buildSocialButton({
+    VoidCallback? onPressed,
+    required Widget icon,
+    required String heroTag,
+  }) {
     return SizedBox(
       width: 55.w,
-      height: 55.w, 
+      height: 55.w,
       child: FloatingActionButton(
         onPressed: onPressed,
         heroTag: heroTag,

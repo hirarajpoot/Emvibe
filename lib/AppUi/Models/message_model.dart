@@ -1,51 +1,35 @@
+enum MessageType { text, image, file, voice }
+
 class Message {
   final String text;
+  final String? path; 
+  final MessageType type;
   final bool isUser;
-  final DateTime time;
-
-  final String? audioPath;   
   final int? audioDurationMs; 
+  final String? fileName; 
 
   Message({
     required this.text,
+    this.path,
+    required this.type,
     required this.isUser,
-    DateTime? time,
-    this.audioPath,
     this.audioDurationMs,
-  }) : time = time ?? DateTime.fromMillisecondsSinceEpoch(0);
+    this.fileName,
+  });
 
-  Message copyWith({
-    String? text,
-    bool? isUser,
-    DateTime? time,
-    String? audioPath,
-    int? audioDurationMs,
-  }) {
-    return Message(
-      text: text ?? this.text,
-      isUser: isUser ?? this.isUser,
-      time: time ?? this.time,
-      audioPath: audioPath ?? this.audioPath,
-      audioDurationMs: audioDurationMs ?? this.audioDurationMs,
-    );
+  factory Message.textMsg(String text, {required bool isUser}) {
+    return Message(text: text, type: MessageType.text, isUser: isUser);
   }
 
-  factory Message.textMsg(String text, {required bool isUser}) => Message(
-        text: text,
-        isUser: isUser,
-        time: DateTime.now(),
-      );
+  factory Message.imageMsg({required String path, required bool isUser}) {
+    return Message(text: "Image", path: path, type: MessageType.image, isUser: isUser);
+  }
 
-  factory Message.voiceMsg({
-    required String path,
-    required int durationMs,
-    required bool isUser,
-  }) =>
-      Message(
-        text: "🎧 Voice message",
-        isUser: isUser,
-        time: DateTime.now(),
-        audioPath: path,
-        audioDurationMs: durationMs,
-      );
+  factory Message.fileMsg({required String path, required String fileName, required bool isUser}) {
+    return Message(text: fileName, path: path, type: MessageType.file, isUser: isUser, fileName: fileName);
+  }
+
+  factory Message.voiceMsg({required String path, required int durationMs, required bool isUser}) {
+    return Message(text: "Voice Note", path: path, type: MessageType.voice, isUser: isUser, audioDurationMs: durationMs);
+  }
 }

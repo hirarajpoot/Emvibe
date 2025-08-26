@@ -8,8 +8,8 @@ import '../../AppScreens/chatbot/ChatBotWidgets/chat_sidebar.dart';
 import '../../AppScreens/chatbot/ChatBotWidgets/attachment_box.dart';
 import '../../AppScreens/chatbot/ChatBotWidgets/chat_input_field.dart';
 import '../../Common_Widget/top_app_bar.dart'; 
-import 'ChatBotWidgets/VoiceRecordingPanel.dart';
-import 'ChatBotWidgets/voice_to_text_mic.dart'; 
+import 'ChatBotWidgets/VoiceRecordingPanel.dart'; 
+
 
 class ChatBotPage extends StatelessWidget {
   const ChatBotPage({super.key});
@@ -37,7 +37,30 @@ class ChatBotPage extends StatelessWidget {
               );
             }),
           ),
-          Obx(() => c.isAttachmentOpen.value
+          // Bot typing indicator
+          Obx(() {
+            if (c.isBotTyping.value) { 
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      "Miley is typing...",
+                      style: TextStyle(fontStyle: FontStyle.italic, color: Colors.black54, fontSize: 14.sp),
+                    ),
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+          Obx(() => c.isAttachmentOpen.value 
               ? const AttachmentBox()
               : const SizedBox.shrink()),
           SafeArea(
@@ -45,14 +68,16 @@ class ChatBotPage extends StatelessWidget {
               padding: EdgeInsets.only(
                   left: 10.w, right: 10.w, bottom: 12.h, top: 6.h),
               child: Obx(() {
-                final isRecordingUIActive = c.isRecordingUIActive.value;
-
-                if (isRecordingUIActive) {
+                if (c.isRecordingUIActive.value) { 
                   return const VoiceRecordingPanel();
                 } else {
-                  return Row(
-                    children: [
-                      Obx(() => Container(
+                  return IntrinsicHeight( 
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end, 
+                      children: [
+                        // Plus (+) icon
+                        Container(
+                          margin: EdgeInsets.only(bottom: 2.h), 
                           width: 42.w,
                           height: 42.w,
                           decoration: BoxDecoration(
@@ -61,7 +86,7 @@ class ChatBotPage extends StatelessWidget {
                           ),
                           child: IconButton(
                             icon: Icon(
-                              c.isAttachmentOpen.value
+                              c.isAttachmentOpen.value 
                                   ? Icons.close
                                   : Icons.add,
                               color: Colors.black54,
@@ -69,34 +94,67 @@ class ChatBotPage extends StatelessWidget {
                             ),
                             onPressed: () => c.toggleAttachment(),
                           ),
-                        )),
-                      SizedBox(width: 8.w),
-                      const VoiceToTextMic(), 
-                      SizedBox(width: 8.w), 
-                      Expanded(
-                        child: ChatInputField(
-                          controller: c.textController, 
-                          borderColor: Colors.grey.shade300,
-                          textColor: Colors.black87,
                         ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Container( 
-                        width: 42.w,
-                        height: 42.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color.fromARGB(255, 243, 242, 242),
-                        ),
-                        child: Center(
-                          child: SizedBox(
-                            width: 24.w,
-                            height: 24.w,
-                            child: Image.asset('assets/images/a.png'),
+                        SizedBox(width: 8.w),
+                        
+                        // Chat Input Field
+                        Expanded( 
+                          child: ChatInputField(
+                            controller: c.textController, 
+                            borderColor: Colors.grey.shade300,
+                            textColor: Colors.black87,
+                            onSubmitted: (value) => c.sendMessage(),
+                            suffixIcon: Obx(() => IconButton( 
+                                icon: Icon(
+                                  c.isListening.value ? Icons.mic : Icons.mic_none, 
+                                  color: c.isListening.value ? Colors.blue.shade700 : Colors.grey.shade500,
+                                ),
+                                onPressed: c.speechEnabled.value
+                                    ? (c.isListening.value ? c.stopListening : c.startListening)
+                                    : null,
+                              )),
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 8.w),
+                        
+                        // a.png / Send button
+                        GestureDetector(
+                          onLongPressStart: (_) => c.startVoiceRecord(), 
+                          onLongPressEnd: (_) => c.stopVoiceRecord(send: true), 
+                          onTap: () { 
+                            if (c.hasText.value) {
+                              c.sendMessage();
+                            } else {
+                              // Get.snackbar(
+                              //   "No Text",
+                              //   "Long press the mic to record voice message.",
+                              //   snackPosition: SnackPosition.BOTTOM,
+                              //   backgroundColor: Colors.orange.withOpacity(0.8),
+                              //   colorText: Colors.white,
+                              // );
+                            }
+                          },
+                          child: Container( 
+                            margin: EdgeInsets.only(bottom: 2.h), 
+                            width: 42.w,
+                            height: 42.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: c.hasText.value ? Colors.blue.shade600 : const Color.fromARGB(255, 243, 242, 242),
+                            ),
+                            child: c.hasText.value
+                              ? Icon(Icons.send, color: Colors.white, size: 22.w) 
+                              : Center( 
+                                  child: SizedBox(
+                                    width: 24.w,
+                                    height: 24.w,
+                                    child: Image.asset('assets/images/a.png'), 
+                                  ),
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 }
               }),
@@ -127,7 +185,7 @@ class ChatBotPage extends StatelessWidget {
         padding: EdgeInsets.all(12.w),
         constraints: BoxConstraints(maxWidth: 0.78.sw),
         decoration: BoxDecoration(color: bg, borderRadius: borderRadius),
-        child: msg.audioPath != null
+        child: msg.type == MessageType.voice
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -138,9 +196,20 @@ class ChatBotPage extends StatelessWidget {
                           TextStyle(color: textColor, fontSize: 14.sp)),
                 ],
               )
-            : Text(msg.text,
-                style:
-                    TextStyle(color: textColor, fontSize: 14.sp)),
+            : msg.type == MessageType.image
+                ? Image.network(msg.path!, width: 200.w, height: 200.h, fit: BoxFit.cover, errorBuilder: (context, error, stackTrace) => Text("Image failed to load: ${msg.path}", style: TextStyle(color: textColor)))
+                : msg.type == MessageType.file
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.insert_drive_file, color: textColor, size: 18.w),
+                          SizedBox(width: 8.w),
+                          Text(msg.fileName ?? "File", style: TextStyle(color: textColor, fontSize: 14.sp)),
+                        ],
+                      )
+                    : Text(msg.text,
+                        style:
+                            TextStyle(color: textColor, fontSize: 14.sp)),
       ),
     );
   }

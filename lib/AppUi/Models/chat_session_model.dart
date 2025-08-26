@@ -1,13 +1,25 @@
-import 'package:get/get.dart'; 
+import 'package:get/get.dart';
+import 'package:uuid/uuid.dart'; 
+import 'package:collection/collection.dart'; 
+
 import 'message_model.dart'; 
 
 class ChatSession {
-  List<Message> messages; 
+  final String id; 
   RxString customTitle;   
-  RxBool isPinned;      
+  RxList<Message> messages; 
+  RxBool isPinned; 
+  final bool isIncognito; // 🔥 Fix: 'isIncognito' field correctly defined here
 
-  ChatSession({required this.messages, String? initialTitle, bool isPinned = false})
-      : customTitle = (initialTitle ?? _deriveTitleFromMessages(messages)).obs,
+  ChatSession({
+    String? id, 
+    required List<Message> messages, 
+    String? initialTitle, 
+    bool isPinned = false,
+    this.isIncognito = false, // 🔥 Fix: 'isIncognito' as a named parameter with default value
+  })  : id = id ?? const Uuid().v4(), 
+        this.messages = messages.obs, 
+        customTitle = (initialTitle ?? _deriveTitleFromMessages(messages)).obs,
         this.isPinned = isPinned.obs;
 
   static String _deriveTitleFromMessages(List<Message> msgs) {
@@ -23,7 +35,7 @@ class ChatSession {
   }
 
   void updateMessages(List<Message> newMessages) {
-    messages = newMessages;
+    messages.assignAll(newMessages); 
     if (customTitle.value.startsWith("New Chat Session") || customTitle.value.startsWith("Chat Session")) {
       customTitle.value = _deriveTitleFromMessages(newMessages);
     }

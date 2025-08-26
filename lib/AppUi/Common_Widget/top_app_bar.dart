@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../Controllers/chatbot_controller.dart';
-import '../AppScreens/chatbot/PersonaSettingsPage.dart'; 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+// Firebase Auth ki ab yahan zaroorat nahi, isko remove kar diya
+// import 'package:firebase_auth/firebase_auth.dart'; 
+
+// 🔥 Corrected import paths
+import 'package:emvibe/AppUi/Controllers/chatbot_controller.dart';
+import 'package:emvibe/AppUi/AppScreens/chatbot/PersonaSettingsPage.dart'; 
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TopAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 🔥 ChatBotController ab theek se pehchana jayega
     final chatController = Get.find<ChatBotController>();
 
     return AppBar(
@@ -19,7 +24,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
         builder: (context) => Row(
           children: [
             IconButton(
-              icon: Icon(Icons.menu, color: Colors.black54, size: 26),
+              icon: const Icon(Icons.menu, color: Colors.black54, size: 26),
               onPressed: () => Scaffold.of(context).openDrawer(),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -45,104 +50,68 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ),
-      title: null,
+      // 🔥 Title ko update kiya, yeh incognito status bhi dikhaega
+      title: Obx(() => Column( 
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                // 🔥 Yahan "Miley AI Chat" hata diya gaya hai
+                chatController.currentChatSessionIndex.value == -1
+                    ? ""
+                    : chatController.getSortedChatSessions()[chatController.currentChatSessionIndex.value].customTitle.value,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (chatController.isCurrentSessionIncognito.value) 
+                Text(
+                  "Incognito",
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 10.sp,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+            ],
+          )),
       centerTitle: false,
 
       actions: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(Icons.settings, color: Colors.black54, size: 22),
-              onPressed: () {
-                Get.to(() => const PersonaSettingsPage());
-              },
-              padding: EdgeInsets.only(right: 8.w), 
-              constraints: const BoxConstraints(),
-              visualDensity: VisualDensity.compact,
+        // Settings aur Notification icons yahan se hata diye gaye hain
+        
+        // New Chat Button 
+        Container(
+          margin: EdgeInsets.only(right: 12.w), 
+          child: ElevatedButton(
+            onPressed: () {
+              chatController.startNewChat();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              padding: EdgeInsets.symmetric(
+                horizontal: 10.w,
+                vertical: 4.h,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+              elevation: 0,
+              minimumSize: Size(60.w, 28.h),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.notifications_none,
-                    color: Colors.black54,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                  },
-                  padding: EdgeInsets.only(right: 8.w), 
-                  constraints: const BoxConstraints(),
-                  visualDensity: VisualDensity.compact,
-                ),
-                Positioned(
-                  right: 10.w, 
-                  top: 6.h,
-                  child: Container(
-                    padding: EdgeInsets.all(2.w),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(6.r),
-                    ),
-                    constraints: BoxConstraints(
-                      minWidth: 12.w,
-                      minHeight: 12.w,
-                    ),
-                    child: Text(
-                      '2',
-                      style: TextStyle(color: Colors.white, fontSize: 8.sp),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            Padding(
-              padding: EdgeInsets.only(right: 8.w), 
-              child: CircleAvatar(
-                radius: 14,
-                backgroundColor: Colors.orange,
-                child: Text(
-                  "M",
-                  style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                ),
+            child: Text(
+              "New Chat",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w600,
               ),
             ),
-
-            // New Chat Button - Moved closer to other icons
-            Container(
-              margin: EdgeInsets.only(right: 12.w), 
-              child: ElevatedButton(
-                onPressed: () {
-                  chatController.startNewChat();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
-                  elevation: 0,
-                  minimumSize: Size(60.w, 28.h),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  "New Chat",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );

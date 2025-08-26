@@ -1,103 +1,63 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import '../../../Controllers/chatbot_controller.dart';
 
 class ChatInputField extends StatelessWidget {
   final TextEditingController? controller;
   final Color borderColor;
   final Color textColor;
+  final Function(String)? onSubmitted; 
+  final Widget? suffixIcon; 
 
   const ChatInputField({
     super.key,
     this.controller,
     required this.borderColor,
     required this.textColor,
+    this.onSubmitted, 
+    this.suffixIcon, 
   });
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.find<ChatBotController>();
-
-    return Obx(() {
-      final isRecording = c.isRecording.value;
-      final hasText = c.hasText.value;
-
-      return ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: 80.h, 
+    return TextField(
+      controller: controller,
+      minLines: 1, 
+      maxLines: 4, 
+      keyboardType: TextInputType.multiline,
+      textCapitalization: TextCapitalization.sentences,
+      style: TextStyle(fontSize: 14.sp, color: textColor),
+      onSubmitted: onSubmitted, 
+      decoration: InputDecoration(
+        isDense: true, 
+        hintText: "Type a message...", 
+        hintStyle: TextStyle(
+          color: Colors.grey.shade400,
+          fontSize: 13.sp,
         ),
-        child: Scrollbar(
-          child: TextField(
-            controller: controller,
-            minLines: 1,
-            maxLines: null, 
-            keyboardType: TextInputType.multiline,
-            style: TextStyle(fontSize: 14.sp, color: textColor),
-            decoration: InputDecoration(
-              hintText: isRecording ? "🎤 Recording..." : "Type a message...",
-              hintStyle: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 13.sp,
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12.w,
-                vertical: 10.h,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: borderColor, width: 1.w),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: borderColor, width: 1.5.w),
-              ),
-              suffixIcon: hasText
-                  ? IconButton(
-                      icon: Transform.rotate(
-                        angle: -15 * math.pi / 180,
-                        child: Icon(
-                          Icons.send,
-                          color: Colors.blue,
-                          size: 22.sp,
-                        ),
-                      ),
-                      onPressed: c.sendMessage,
-                    )
-                  : GestureDetector(
-                      onLongPressStart: (_) {
-                        if (c.isListening.value) {
-                          c.stopListening();
-                        }
-                        c.startVoiceRecord();
-                      },
-                      onLongPressEnd: (_) => c.stopVoiceRecord(send: true),
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 6.w),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          width: 38.w,
-                          height: 38.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isRecording
-                                ? Colors.red
-                                : const Color(0xFFF3F2F2),
-                          ),
-                          child: Icon(
-                            isRecording ? Icons.mic : Icons.mic_none,
-                            color: isRecording ? Colors.white : Colors.black54,
-                            size: 20.sp,
-                          ),
-                        ),
-                      ),
-                    ),
+        // 🔥 contentPadding ko adjust kiya taake text theek se dikhe
+        // Suffix icon ab Stack aur Align se control hoga
+        contentPadding: EdgeInsets.fromLTRB(12.w, 10.h, 48.w, 10.h), // 🔥 Right padding badha di mic ke liye
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: borderColor, width: 1.w),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: borderColor, width: 1.5.w),
+        ),
+        // 🔥 Suffix icon ko Stack aur Align mein wrap kiya taake woh bottom par fixed rahe
+        suffixIcon: SizedBox(
+          width: 42.w, // 🔥 Icon ki width ke mutabiq SizedBox width
+          height: double.infinity, // 🔥 Available height le
+          child: Align(
+            alignment: Alignment.bottomRight, // 🔥 Bottom right par align kiya
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 2.h, right: 2.w), // 🔥 Thodi bottom/right padding
+              child: suffixIcon,
             ),
-            onSubmitted: (_) => c.sendMessage(),
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 }
