@@ -1,0 +1,68 @@
+Map<String, Map<String, String>> get chatbotScreenTranslations {
+  return {
+    'en': {
+      'typing_indicator': 'Miley is typing...',
+      'type_message_hint': 'Type a message...',
+      'image_failed': 'Image failed to load',
+      'file': 'File',
+      'seconds_short': 's',
+      'minutes_short': 'm',
+    },
+    'ur': {
+      'typing_indicator': 'Miley ٹائپ کر رہی ہے...',
+      'type_message_hint': 'ایک پیغام ٹائپ کریں...',
+      'image_failed': 'تصویر لوڈ نہیں ہو سکی',
+      'file': 'فائل',
+      'seconds_short': 'سیکنڈ',
+      'minutes_short': 'منٹ',
+    },
+    'hi': {
+      'typing_indicator': 'Miley टाइप कर रही है...',
+      'type_message_hint': 'एक संदेश टाइप करें...',
+      'image_failed': 'छवि लोड नहीं हो सकी',
+      'file': 'फ़ाइल',
+      'seconds_short': 'सेकंड',
+      'minutes_short': 'मिनट',
+    },
+    'ar': {
+      'typing_indicator': 'Miley تكتب الآن...',
+      'type_message_hint': 'اكتب رسالة...',
+      'image_failed': 'فشل تحميل الصورة',
+      'file': 'ملف',
+      'seconds_short': 'ثانية',
+      'minutes_short': 'دقيقة',
+    },
+    'fr': {
+      'typing_indicator': 'Miley est en train d\'écrire...',
+      'type_message_hint': 'Tapez un message...',
+      'image_failed': 'Échec du chargement de l\'image',
+      'file': 'Fichier',
+      'seconds_short': 's',
+      'minutes_short': 'm',
+    },
+    'es': {
+      'typing_indicator': 'Miley está escribiendo...',
+      'type_message_hint': 'Escribe a message...',
+      'image_failed': 'Error al cargar la imagen',
+      'file': 'Archivo',
+      'seconds_short': 's',
+      'minutes_short': 'm',
+    },
+    'de': {
+      'typing_indicator': 'Miley tippt...',
+      'type_message_hint': 'Nachricht eingeben...',
+      'image_failed': 'Bild konnte nicht geladen werden',
+      'file': 'Datei',
+      'seconds_short': 's',
+      'minutes_short': 'm',
+    },
+    'zh': {
+      'typing_indicator': 'Miley正在输入...',
+      'type_message_hint': '输入消息...',
+      'image_failed': '图片加载失败',
+      'file': '文件',
+      'seconds_short': '秒',
+      'minutes_short': '分',
+    },
+  };
+}

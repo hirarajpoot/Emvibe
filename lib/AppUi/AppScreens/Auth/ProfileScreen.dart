@@ -7,7 +7,8 @@ import 'dart:math';
 import 'package:emvibe/AppUi/AppScreens/chatbot/chatbot_page.dart'; 
 import 'package:emvibe/AppUi/Controllers/chatbot_controller.dart'; 
 import 'package:emvibe/AppUi/AppScreens/chatbot/PersonaSettingsPage.dart';
-import 'package:emvibe/AppUi/AppScreens/Auth/GeneralSettingsPage.dart'; // 🔥 Naya import
+import 'package:emvibe/AppUi/AppScreens/Auth/GeneralSettingsPage.dart';
+import 'package:emvibe/AppUi/Controllers/GeneralSettingsController.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -38,101 +39,104 @@ class ProfileScreen extends StatelessWidget {
     }
 
     final ChatBotController chatController = Get.find<ChatBotController>();
+    final settingsController = Get.find<GeneralSettingsController>();
 
-    return Scaffold(
-      backgroundColor: Colors.black, 
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w), 
-          onPressed: () {
-            Get.back(); 
-          },
+    return Obx(() {
+      final isDark = settingsController.isDarkMode.value;
+      final backgroundColor = isDark ? Colors.black : Colors.grey.shade100;
+      final textColor = isDark ? Colors.white : Colors.black;
+      final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
+
+      return Scaffold(
+        backgroundColor: backgroundColor,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: textColor, size: 24.w),
+            onPressed: () {
+              Get.back();
+            },
+          ),
+          title: Text(
+            "profile".tr, // ✅ translated
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: textColor),
+          ),
+          backgroundColor: backgroundColor,
+          foregroundColor: textColor,
+          elevation: 0,
         ),
-        title: Text(
-          "Profile",
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        backgroundColor: Colors.black, 
-        foregroundColor: Colors.white, 
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User Account Section
-            _buildSectionHeader("ACCOUNT"),
-            _buildProfileCard(firstLetter, avatarColor, userName, userEmail, context),
-            SizedBox(height: 20.h),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionHeader("account".tr, textColor),
+              _buildProfileCard(firstLetter, avatarColor, userName, userEmail, context, cardColor, textColor),
+              SizedBox(height: 20.h),
 
-            // Settings Section
-            _buildSectionHeader("SETTINGS"),
-            // 🔥 Yahan GeneralSettingsPage par navigate karwaya gaya hai
-            _buildSettingsItem(context, Icons.tune, "General Settings", () {
-              Get.to(() => const GeneralSettingsPage());
-            }),
-            _buildSettingsItem(context, Icons.security, "Security", () {
-              // No snackbar, silent operation
-            }),
-            _buildSettingsItem(context, Icons.credit_card, "Subscriptions", () {
-              // No snackbar, silent operation
-            }),
-            SizedBox(height: 20.h),
+              _buildSectionHeader("settings".tr, textColor),
+              _buildSettingsItem(context, Icons.tune, "general_settings".tr, () {
+                Get.to(() => const GeneralSettingsPage());
+              }, cardColor, textColor),
+              _buildSettingsItem(context, Icons.security, "security".tr, () {}, cardColor, textColor),
+              _buildSettingsItem(context, Icons.credit_card, "subscriptions".tr, () {}, cardColor, textColor),
+              SizedBox(height: 20.h),
 
-            // Advanced Features Section
-            _buildSectionHeader("ADVANCED"),
-            _buildSettingsItem(context, Icons.visibility_off, "Incognito Chat", () {
-              chatController.startIncognitoChat(); 
-              Get.back(); 
-              Get.to(() => const ChatBotPage()); 
-            }),
-            _buildSettingsItem(context, Icons.palette_outlined, "Change Persona", () {
-              Get.back(); // Profile screen close karein
-              Get.to(() => const PersonaSettingsPage()); // PersonaSettingsPage par navigate karein
-            }),
-            _buildSettingsItem(context, Icons.phone, "Phone Number", () {
-              // No snackbar, silent operation
-            }),
-            _buildSettingsItem(context, Icons.info_outline, "About", () {
-              // No snackbar, silent operation
-            }),
-            SizedBox(height: 20.h),
+              _buildSectionHeader("advanced".tr, textColor),
+              _buildSettingsItem(context, Icons.visibility_off, "incognito_chat".tr, () {
+                chatController.startIncognitoChat();
+                Get.back();
+                Get.to(() => const ChatBotPage());
+              }, cardColor, textColor),
+              _buildSettingsItem(context, Icons.palette_outlined, "change_persona".tr, () {
+                Get.back();
+                Get.to(() => const PersonaSettingsPage());
+              }, cardColor, textColor),
+              _buildSettingsItem(context, Icons.phone, "phone_number".tr, () {}, cardColor, textColor),
+              _buildSettingsItem(context, Icons.info_outline, "about".tr, () {}, cardColor, textColor),
+              SizedBox(height: 20.h),
 
-            // Logout Button
-            _buildSettingsItem(context, Icons.logout, "Logout", () {
-              Get.defaultDialog(
-                backgroundColor: Colors.grey.shade900,
-                title: "Logout",
-                titleStyle: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
-                middleText: "Are you sure you want to log out?",
-                middleTextStyle: TextStyle(color: Colors.white70, fontSize: 14.sp),
-                textConfirm: "Logout",
-                textCancel: "Cancel",
-                confirmTextColor: Colors.white,
-                buttonColor: Colors.blue, 
-                cancelTextColor: Colors.white,
-                onConfirm: () async {
-                  await FirebaseAuth.instance.signOut(); 
-                  Get.back(); 
-                  Get.offAllNamed('/login'); 
+              _buildSettingsItem(
+                context,
+                Icons.logout,
+                "logout".tr,
+                () {
+                  Get.defaultDialog(
+                    backgroundColor: cardColor,
+                    title: "logout".tr,
+                    titleStyle: TextStyle(color: textColor, fontSize: 18.sp, fontWeight: FontWeight.bold),
+                    middleText: "logout_confirm".tr,
+                    middleTextStyle: TextStyle(color: textColor.withOpacity(0.7), fontSize: 14.sp),
+                    textConfirm: "logout".tr,
+                    textCancel: "cancel".tr,
+                    confirmTextColor: Colors.white,
+                    buttonColor: Colors.blue,
+                    cancelTextColor: textColor,
+                    onConfirm: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Get.back();
+                      Get.offAllNamed('/login');
+                    },
+                    onCancel: () => Get.back(),
+                  );
                 },
-                onCancel: () => Get.back(),
-              );
-            }, iconColor: Colors.red, textColor: Colors.red), 
-          ],
+                cardColor,
+                Colors.red,
+                iconColor: Colors.red,
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, Color textColor) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Text(
         title,
         style: TextStyle(
-          color: Colors.white70,
+          color: textColor.withOpacity(0.7),
           fontSize: 12.sp,
           fontWeight: FontWeight.bold,
         ),
@@ -140,9 +144,16 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard(String firstLetter, Color avatarColor, String userName, String userEmail, BuildContext context) {
+  Widget _buildProfileCard(
+      String firstLetter,
+      Color avatarColor,
+      String userName,
+      String userEmail,
+      BuildContext context,
+      Color cardColor,
+      Color textColor) {
     return Card(
-      color: Colors.grey.shade900, 
+      color: cardColor,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
       child: Padding(
@@ -164,23 +175,21 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   Text(
                     userName,
-                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: textColor),
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4.h),
                   Text(
                     userEmail,
-                    style: TextStyle(fontSize: 14.sp, color: Colors.white70),
+                    style: TextStyle(fontSize: 14.sp, color: textColor.withOpacity(0.7)),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
             IconButton(
-              icon: Icon(Icons.edit, color: Colors.white54, size: 20.w),
-              onPressed: () {
-                // No snackbar, silent operation
-              },
+              icon: Icon(Icons.edit, color: textColor.withOpacity(0.6), size: 20.w),
+              onPressed: () {},
             ),
           ],
         ),
@@ -188,19 +197,27 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsItem(BuildContext context, IconData icon, String title, VoidCallback onTap, {Color iconColor = Colors.white, Color textColor = Colors.white}) {
+  Widget _buildSettingsItem(
+      BuildContext context,
+      IconData icon,
+      String title,
+      VoidCallback onTap,
+      Color cardColor,
+      Color textColor, {
+        Color? iconColor,
+      }) {
     return Card(
-      color: Colors.grey.shade900, 
+      color: cardColor,
       margin: EdgeInsets.symmetric(vertical: 4.h),
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
       child: ListTile(
-        leading: Icon(icon, color: iconColor, size: 22.w),
+        leading: Icon(icon, color: iconColor ?? textColor, size: 22.w),
         title: Text(
           title,
           style: TextStyle(fontSize: 16.sp, color: textColor),
         ),
-        trailing: Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16.w),
+        trailing: Icon(Icons.arrow_forward_ios, color: textColor.withOpacity(0.5), size: 16.w),
         onTap: onTap,
       ),
     );

@@ -3,8 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // 🔥 FontAwesomeIcons import zaroori hai
-// 🔥 TapGestureRecognizer ka import hata diya gaya hai, kyunki ab text ke bajaye button hai
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'SignupScreen.dart';
 import 'ResetPasswordScreen.dart';
@@ -187,12 +186,11 @@ class LoginScreen extends StatelessWidget {
     final LoginController loginController = Get.put(LoginController());
 
     return Scaffold(
-      backgroundColor: Color(0xFFF0F4F8),
+      backgroundColor: const Color(0xFFF0F4F8),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(height: 50.h),
@@ -201,7 +199,7 @@ class LoginScreen extends StatelessWidget {
                 child: Text(
                   "Emvibe",
                   style: TextStyle(
-                    color: Color(0xFF1A237E),
+                    color: const Color(0xFF1A237E),
                     fontSize: 32.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -223,24 +221,22 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 30.h),
 
-              // Email Input with custom box decoration and inline error
+              // Email Input
               Obx(
                 () => Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10.r),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 2,
                         blurRadius: 5,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                     border: Border.all(
                       color: loginController.emailError.value.isNotEmpty
                           ? Colors.red
-                          : Colors.transparent, // Default no border
+                          : Colors.transparent,
                       width: 1.5,
                     ),
                   ),
@@ -251,15 +247,18 @@ class LoginScreen extends StatelessWidget {
                     onChanged: (value) => loginController.emailError.value = '',
                     decoration: InputDecoration(
                       labelText: "Email",
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
                       prefixIcon: Icon(
                         Icons.email,
                         color: Colors.grey.shade500,
-                      ), // 🔥 Email Icon
+                      ),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 14.h,
                         horizontal: 16.w,
                       ),
                       border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.white,
                       errorText: loginController.emailError.value.isEmpty
                           ? null
                           : loginController.emailError.value,
@@ -270,42 +269,36 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
 
-              // Password Input with custom box decoration, inline error, and toggle
+              // Password Input
               Obx(
                 () => Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10.r),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 2,
                         blurRadius: 5,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                     border: Border.all(
                       color: loginController.passwordError.value.isNotEmpty
                           ? Colors.red
-                          : Colors.transparent, // Default no border
+                          : Colors.transparent,
                       width: 1.5,
                     ),
                   ),
                   child: TextField(
                     controller: loginController.passwordController,
                     style: TextStyle(color: Colors.black, fontSize: 16.sp),
-                    obscureText: !loginController
-                        .isPasswordVisible, // 🔥 Toggle visibility
+                    obscureText: !loginController.isPasswordVisible,
                     onChanged: (value) =>
                         loginController.passwordError.value = '',
                     decoration: InputDecoration(
                       labelText: "Password",
-                      prefixIcon: Icon(
-                        Icons.lock,
-                        color: Colors.grey.shade500,
-                      ), // 🔥 Password Icon
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      prefixIcon: Icon(Icons.lock, color: Colors.grey.shade500),
                       suffixIcon: IconButton(
-                        // 🔥 Show/Hide Password Icon
                         icon: Icon(
                           loginController.isPasswordVisible
                               ? Icons.visibility
@@ -319,6 +312,8 @@ class LoginScreen extends StatelessWidget {
                         horizontal: 16.w,
                       ),
                       border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.white,
                       errorText: loginController.passwordError.value.isEmpty
                           ? null
                           : loginController.passwordError.value,
@@ -337,7 +332,10 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: Text(
                     "Forgot Password?",
-                    style: TextStyle(color: Color(0xFF1A237E), fontSize: 14.sp),
+                    style: TextStyle(
+                      color: const Color(0xFF1A237E),
+                      fontSize: 14.sp,
+                    ),
                   ),
                 ),
               ),
@@ -348,8 +346,24 @@ class LoginScreen extends StatelessWidget {
                   onPressed: loginController.isLoading.value
                       ? null
                       : () => loginController.loginUser(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(
+                      0xFF1A237E,
+                    ), // ✅ Fixed Dark Blue BG
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    textStyle: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    elevation: 0,
+                    minimumSize: Size(double.infinity, 52.h),
+                  ),
                   child: loginController.isLoading.value
-                      ? CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
                           "Sign In",
                           style: TextStyle(
@@ -360,6 +374,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                 ),
               ),
+
               SizedBox(height: 30.h),
 
               Row(
@@ -400,7 +415,6 @@ class LoginScreen extends StatelessWidget {
                     heroTag: "googleLogin",
                   ),
                   SizedBox(width: 20.w),
-
                   _buildSocialButton(
                     onPressed: loginController.isLoading.value
                         ? null
@@ -413,7 +427,6 @@ class LoginScreen extends StatelessWidget {
                     heroTag: "facebookLogin",
                   ),
                   SizedBox(width: 20.w),
-
                   _buildSocialButton(
                     onPressed: loginController.isLoading.value
                         ? null
@@ -444,7 +457,7 @@ class LoginScreen extends StatelessWidget {
                       TextSpan(
                         text: "Sign Up",
                         style: TextStyle(
-                          color: Color(0xFF1A237E),
+                          color: const Color(0xFF1A237E),
                           fontWeight: FontWeight.bold,
                           fontSize: 14.sp,
                         ),
@@ -461,7 +474,6 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // 🔥 _buildSocialButton helper widget yahan dobara add kiya gaya hai
   Widget _buildSocialButton({
     VoidCallback? onPressed,
     required Widget icon,

@@ -7,6 +7,7 @@ class ChatInputField extends StatelessWidget {
   final Color textColor;
   final Function(String)? onSubmitted; 
   final Widget? suffixIcon; 
+  final String? hintText; // ✅ Added for translations
 
   const ChatInputField({
     super.key,
@@ -15,6 +16,7 @@ class ChatInputField extends StatelessWidget {
     required this.textColor,
     this.onSubmitted, 
     this.suffixIcon, 
+    this.hintText, // ✅ Now you can pass .tr
   });
 
   @override
@@ -29,14 +31,17 @@ class ChatInputField extends StatelessWidget {
       onSubmitted: onSubmitted, 
       decoration: InputDecoration(
         isDense: true, 
-        hintText: "Type a message...", 
+        hintText: hintText ?? "Type a message...", // ✅ Uses passed translation key
         hintStyle: TextStyle(
           color: Colors.grey.shade400,
           fontSize: 13.sp,
         ),
-        // 🔥 contentPadding ko adjust kiya taake text theek se dikhe
-        // Suffix icon ab Stack aur Align se control hoga
-        contentPadding: EdgeInsets.fromLTRB(12.w, 10.h, 48.w, 10.h), // 🔥 Right padding badha di mic ke liye
+        contentPadding: EdgeInsets.fromLTRB(
+          12.w, 
+          10.h, 
+          suffixIcon != null ? 48.w : 12.w, // ✅ Adjust if suffix present
+          10.h,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
           borderSide: BorderSide(color: borderColor, width: 1.w),
@@ -45,18 +50,19 @@ class ChatInputField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           borderSide: BorderSide(color: borderColor, width: 1.5.w),
         ),
-        // 🔥 Suffix icon ko Stack aur Align mein wrap kiya taake woh bottom par fixed rahe
-        suffixIcon: SizedBox(
-          width: 42.w, // 🔥 Icon ki width ke mutabiq SizedBox width
-          height: double.infinity, // 🔥 Available height le
-          child: Align(
-            alignment: Alignment.bottomRight, // 🔥 Bottom right par align kiya
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 2.h, right: 2.w), // 🔥 Thodi bottom/right padding
-              child: suffixIcon,
-            ),
-          ),
-        ),
+        suffixIcon: suffixIcon != null
+            ? SizedBox(
+                width: 42.w,
+                height: double.infinity,
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 2.h, right: 2.w),
+                    child: suffixIcon,
+                  ),
+                ),
+              )
+            : null,
       ),
     );
   }
