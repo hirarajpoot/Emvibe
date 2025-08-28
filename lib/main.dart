@@ -9,11 +9,15 @@ import 'AppUi/Controllers/GeneralSettingsController.dart';
 import 'AppUi/translations/app_translations.dart';
 import 'firebase_options.dart';
 import 'AppUi/AppScreens/chatbot/chatbot_page.dart';
+import 'AppUi/AppScreens/ProfileScreen/GeneralSettings/widgets/notification_service.dart'; // 🔥 New: Import NotificationService
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // 🔥 New: Register the NotificationService
+  Get.put(NotificationService()); 
 
   runApp(const MyApp());
 }

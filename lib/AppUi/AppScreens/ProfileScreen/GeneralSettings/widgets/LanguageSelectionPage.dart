@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../Controllers/GeneralSettingsController.dart';
+import '../../../../Controllers/GeneralSettingsController.dart';
 
 class LanguageSelectionPage extends StatelessWidget {
   LanguageSelectionPage({super.key});

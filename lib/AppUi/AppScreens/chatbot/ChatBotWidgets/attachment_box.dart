@@ -9,6 +9,12 @@ class AttachmentBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.find<ChatBotController>();
+    final isDarkMode = Get.isDarkMode;
+
+    final boxColor = isDarkMode ? Colors.grey[850] : Colors.white;
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final dividerColor = isDarkMode ? Colors.grey[600] : Colors.grey[300];
 
     return Align(
       alignment: Alignment.bottomLeft,
@@ -17,7 +23,7 @@ class AttachmentBox extends StatelessWidget {
         margin: EdgeInsets.only(left: 12.w, bottom: 2.h), 
         padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: boxColor,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
@@ -34,20 +40,21 @@ class AttachmentBox extends StatelessWidget {
               onTap: c.pickFromCamera,
               child: Row(
                 children: [
-                  Icon(Icons.camera_alt, size: 18.w, color: Colors.black),
+                  Icon(Icons.camera_alt, size: 18.w, color: iconColor),
                   SizedBox(width: 8.w),
                   Text(
-                    "Camera",
+                    "Camera".tr, // Corrected key to lowercase
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
+                      color: textColor,
                     ),
                   ),
                 ],
               ),
             ),
 
-            Divider(height: 10.h, color: Colors.grey[300]),
+            Divider(height: 10.h, color: dividerColor),
 
             InkWell(
               onTap: c.pickDocument,
@@ -56,14 +63,15 @@ class AttachmentBox extends StatelessWidget {
                   Icon(
                     Icons.insert_drive_file,
                     size: 18.w,
-                    color: Colors.black,
+                    color: iconColor,
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    "Document",
+                    "Document".tr, // Corrected key to lowercase
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
+                      color: textColor,
                     ),
                   ),
                 ],

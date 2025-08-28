@@ -25,6 +25,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': 'Clear All',
       'clear_all_chats_title': 'Clear All Chats?',
       'clear_all_chats_message': 'Are you sure you want to clear all chat history? Pinned chats will not be deleted.',
+      'cancel': 'Cancel', // Added this key
+      'rename': 'Rename', // Added this key
+      'delete': 'Delete', // Added this key
+      'profile': 'Profile', // Added this key
+      'guest': 'Guest', // Added this key
+      'Chatbot': 'Chatbot', // Added this key
     },
     'ur': {
       'app_name': 'مائی ایپ',
@@ -51,6 +57,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': 'سب صاف کریں',
       'clear_all_chats_title': 'تمام چیٹس صاف کریں؟',
       'clear_all_chats_message': 'کیا آپ واقعی تمام چیٹ تاریخ صاف کرنا چاہتے ہیں؟ پن کی گئی چیٹس حذف نہیں ہوں گی۔',
+      'cancel': 'منسوخ کریں', // Added this key
+      'rename': 'نام تبدیل کریں', // Added this key
+      'delete': 'حذف کریں', // Added this key
+      'profile': 'پروفائل', // Added this key
+      'guest': 'مہمان', // Added this key
+      'Chatbot': 'چیٹ بوٹ', // Added this key
     },
     'hi': {
       'app_name': 'मेरा ऐप',
@@ -77,6 +89,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': 'सभी साफ करें',
       'clear_all_chats_title': 'सभी चैट साफ करें?',
       'clear_all_chats_message': 'क्या आप वाकई सभी चैट इतिहास साफ करना चाहते हैं? पिन की गई चैट हटाई नहीं जाएंगी।',
+      'cancel': 'रद्द करें', // Added this key
+      'rename': 'नाम बदलें', // Added this key
+      'delete': 'हटाएं', // Added this key
+      'profile': 'प्रोफाइल', // Added this key
+      'guest': 'अतिथि', // Added this key
+      'Chatbot': 'चैटबॉट', // Added this key
     },
     'ar': {
       'app_name': 'تطبيقي',
@@ -103,6 +121,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': 'مسح الكل',
       'clear_all_chats_title': 'مسح جميع الدردشات?',
       'clear_all_chats_message': 'هل أنت متأكد أنك تريد مسح سجل الدردشة بالكامل? لن يتم حذف الدردشات المثبتة.',
+      'cancel': 'إلغاء', // Added this key
+      'rename': 'إعادة تسمية', // Added this key
+      'delete': 'حذف', // Added this key
+      'profile': 'الملف الشخصي', // Added this key
+      'guest': 'ضيف', // Added this key
+      'Chatbot': 'شات بوت', // Added this key
     },
     'fr': {
       'app_name': 'Mon App',
@@ -129,6 +153,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': 'Tout effacer',
       'clear_all_chats_title': 'Effacer tous les chats?',
       'clear_all_chats_message': 'Êtes-vous sûr de vouloir effacer tout l\'historique des chats? Les chats épinglés ne seront pas supprimés.',
+      'cancel': 'Annuler', // Added this key
+      'rename': 'Renommer', // Added this key
+      'delete': 'Supprimer', // Added this key
+      'profile': 'Profil', // Added this key
+      'guest': 'Invité', // Added this key
+      'Chatbot': 'Chatbot', // Added this key
     },
     'es': {
       'app_name': 'Mi App',
@@ -155,6 +185,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': 'Limpiar todo',
       'clear_all_chats_title': '¿Borrar todos los chats?',
       'clear_all_chats_message': '¿Estás seguro de que quieres borrar todo el historial de chat? Los chats anclados no se eliminarán.',
+      'cancel': 'Cancelar', // Added this key
+      'rename': 'Renombrar', // Added this key
+      'delete': 'Eliminar', // Added this key
+      'profile': 'Perfil', // Added this key
+      'guest': 'Invitado', // Added this key
+      'Chatbot': 'Chatbot', // Added this key
     },
     'de': {
       'app_name': 'Meine App',
@@ -181,6 +217,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': 'Alles löschen',
       'clear_all_chats_title': 'Alle Chats löschen?',
       'clear_all_chats_message': 'Sind Sie sicher, dass Sie den gesamten Chat-Verlauf löschen möchten? Angeheftete Chats werden nicht gelöscht.',
+      'cancel': 'Abbrechen', // Added this key
+      'rename': 'Umbenennen', // Added this key
+      'delete': 'Löschen', // Added this key
+      'profile': 'Profil', // Added this key
+      'guest': 'Gast', // Added this key
+      'Chatbot': 'Chatbot', // Added this key
     },
     'zh': {
       'app_name': '我的应用',
@@ -207,6 +249,12 @@ Map<String, Map<String, String>> get sidebarTranslations {
       'clear_all': '全部清除',
       'clear_all_chats_title': '清除所有聊天？',
       'clear_all_chats_message': '您确定要清除所有聊天记录吗？固定的聊天不会被删除。',
+      'cancel': '取消', // Added this key
+      'rename': '重命名', // Added this key
+      'delete': '删除', // Added this key
+      'profile': ' profile', // Added this key
+      'guest': ' guest', // Added this key
+      'Chatbot': 'Chatbot', // Added this key
     },
   };
 }

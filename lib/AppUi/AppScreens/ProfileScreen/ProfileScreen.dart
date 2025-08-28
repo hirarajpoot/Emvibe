@@ -6,8 +6,8 @@ import 'dart:math';
 
 import 'package:emvibe/AppUi/AppScreens/chatbot/chatbot_page.dart'; 
 import 'package:emvibe/AppUi/Controllers/chatbot_controller.dart'; 
-import 'package:emvibe/AppUi/AppScreens/chatbot/PersonaSettingsPage.dart';
-import 'package:emvibe/AppUi/AppScreens/Auth/GeneralSettingsPage.dart';
+import 'PersonaSettingsPage.dart';
+import '../ProfileScreen/GeneralSettings/GeneralSettingsPage.dart';
 import 'package:emvibe/AppUi/Controllers/GeneralSettingsController.dart';
 
 class ProfileScreen extends StatelessWidget {

@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// Firebase Auth ki ab yahan zaroorat nahi, isko remove kar diya
-// import 'package:firebase_auth/firebase_auth.dart'; 
-
-// 🔥 Corrected import paths
 import 'package:emvibe/AppUi/Controllers/chatbot_controller.dart';
-import 'package:emvibe/AppUi/AppScreens/chatbot/PersonaSettingsPage.dart'; 
+// import 'package:emvibe/AppUi/AppScreens/chatbot/PersonaSettingsPage.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TopAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 ChatBotController ab theek se pehchana jayega
     final chatController = Get.find<ChatBotController>();
+    final isDarkMode = Get.isDarkMode;
+
+    final appBarColor = isDarkMode ? Colors.grey[900] : Colors.white;
+    final iconColor = isDarkMode ? Colors.white : Colors.black54;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final incognitoColor = isDarkMode ? Colors.grey[400] : Colors.grey.shade600;
 
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: appBarColor,
       elevation: 0.5,
       leadingWidth: 110.w,
       leading: Builder(
         builder: (context) => Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black54, size: 26),
+              icon: Icon(Icons.menu, color: iconColor, size: 26),
               onPressed: () => Scaffold.of(context).openDrawer(),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -40,9 +41,9 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             SizedBox(width: 6.w),
             Text(
-              "Miley",
+              "app_name".tr, // Corrected key to lowercase
               style: TextStyle(
-                color: Colors.black,
+                color: textColor,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -50,28 +51,26 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ),
-      // 🔥 Title ko update kiya, yeh incognito status bhi dikhaega
-      title: Obx(() => Column( 
+      title: Obx(() => Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                // 🔥 Yahan "Miley AI Chat" hata diya gaya hai
                 chatController.currentChatSessionIndex.value == -1
                     ? ""
                     : chatController.getSortedChatSessions()[chatController.currentChatSessionIndex.value].customTitle.value,
                 style: TextStyle(
-                  color: Colors.black,
+                  color: textColor,
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
-              if (chatController.isCurrentSessionIncognito.value) 
+              if (chatController.isCurrentSessionIncognito.value)
                 Text(
-                  "Incognito",
+                  "incognito".tr, // Corrected key to lowercase
                   style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: incognitoColor,
                     fontSize: 10.sp,
                     fontStyle: FontStyle.italic,
                   ),
@@ -79,13 +78,9 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           )),
       centerTitle: false,
-
       actions: [
-        // Settings aur Notification icons yahan se hata diye gaye hain
-        
-        // New Chat Button 
         Container(
-          margin: EdgeInsets.only(right: 12.w), 
+          margin: EdgeInsets.only(right: 12.w),
           child: ElevatedButton(
             onPressed: () {
               chatController.startNewChat();
@@ -104,7 +99,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              "New Chat",
+              "new_chat".tr, // Corrected key to lowercase
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 11.sp,

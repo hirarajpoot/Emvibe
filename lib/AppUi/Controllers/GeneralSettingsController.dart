@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class GeneralSettingsController extends GetxController {
   final box = GetStorage();
+  final ImagePicker _picker = ImagePicker();
 
   final themeMode = ThemeMode.system.obs;
   final isDarkMode = false.obs;
   final selectedLanguage = 'en'.obs;
   final currentLocale = const Locale('en').obs;
+  final customBackgroundPath = ''.obs;
+  final notificationsEnabled = true.obs; 
 
   @override
   void onInit() {
     super.onInit();
     _loadThemeMode();
     _loadLanguage();
+    _loadCustomBackground();
+    _loadNotificationsSetting(); 
   }
 
   void _loadThemeMode() {
@@ -57,5 +63,33 @@ class GeneralSettingsController extends GetxController {
     currentLocale.value = Locale(code);
     box.write('language', code);
     Get.updateLocale(Locale(code));
+  }
+
+  void _loadCustomBackground() {
+    final savedPath = box.read('customBackgroundPath') ?? '';
+    customBackgroundPath.value = savedPath;
+  }
+
+  Future<void> setCustomBackground() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      customBackgroundPath.value = image.path;
+      box.write('customBackgroundPath', image.path);
+    }
+  }
+
+  void removeCustomBackground() {
+    customBackgroundPath.value = '';
+    box.remove('customBackgroundPath');
+  }
+
+  void _loadNotificationsSetting() {
+    final savedSetting = box.read('notificationsEnabled');
+    notificationsEnabled.value = savedSetting ?? true;
+  }
+
+  void toggleNotifications(bool value) {
+    notificationsEnabled.value = value;
+    box.write('notificationsEnabled', value);
   }
 }

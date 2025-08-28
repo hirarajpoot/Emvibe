@@ -1,11 +1,12 @@
-// lib/AppUi/AppScreens/general_settings/GeneralSettingsPage.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../Controllers/GeneralSettingsController.dart';
-import '../general_settings/LanguageSelectionPage.dart';
+import '../../../Controllers/GeneralSettingsController.dart';
+import '../GeneralSettings/widgets/LanguageSelectionPage.dart';
+
+import 'widgets/theme_selection_dialog.dart';
+import 'widgets/background_selection_dialog.dart';
 
 class GeneralSettingsPage extends StatelessWidget {
   const GeneralSettingsPage({super.key});
@@ -56,18 +57,19 @@ class GeneralSettingsPage extends StatelessWidget {
                 icon: Icons.palette,
                 title: "set_theme".tr,
                 onTap: () {
-                  _showThemeSelectionDialog(context);
+                  // 🔥 Fixed: Use Get.dialog to show the dialog over the current screen
+                  Get.dialog(ThemeSelectionDialog());
                 },
                 cardColor: cardColor,
                 textColor: textColor,
               ),
-              _buildSettingsTile(
+              // NEW: Replaced with a switch-based tile
+              _buildSwitchSettingsTile(
                 context,
                 icon: Icons.notifications_none,
                 title: "set_notifications".tr,
-                onTap: () {
-                  _showSnackbar(context, "coming_soon".tr);
-                },
+                value: settingsController.notificationsEnabled.value,
+                onChanged: (value) => settingsController.toggleNotifications(value),
                 cardColor: cardColor,
                 textColor: textColor,
               ),
@@ -76,7 +78,8 @@ class GeneralSettingsPage extends StatelessWidget {
                 icon: Icons.photo_size_select_actual_outlined,
                 title: "set_background".tr,
                 onTap: () {
-                  _showSnackbar(context, "coming_soon".tr);
+                  // 🔥 Fixed: Use Get.dialog to show the dialog over the current screen
+                  Get.dialog(BackgroundSelectionDialog());
                 },
                 cardColor: cardColor,
                 textColor: textColor,
@@ -116,67 +119,34 @@ class GeneralSettingsPage extends StatelessWidget {
     );
   }
 
-  void _showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(10.w),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  void _showThemeSelectionDialog(BuildContext context) {
-    final settingsController = Get.find<GeneralSettingsController>();
-    Get.dialog(
-      AlertDialog(
-        backgroundColor:
-            settingsController.isDarkMode.value ? Colors.grey.shade800 : Colors.white,
+  // NEW: A separate widget for a tile with a switch
+  Widget _buildSwitchSettingsTile(BuildContext context, {
+    required IconData icon,
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    required Color cardColor,
+    required Color textColor,
+  }) {
+    return Card(
+      color: cardColor,
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+        leading: Icon(icon, color: textColor, size: 22.w),
         title: Text(
-          "select_theme".tr,
-          style: TextStyle(
-            color: settingsController.isDarkMode.value ? Colors.white : Colors.black,
-          ),
+          title,
+          style: TextStyle(fontSize: 16.sp, color: textColor),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildThemeOption(context, "system".tr, ThemeMode.system),
-            _buildThemeOption(context, "light".tr, ThemeMode.light),
-            _buildThemeOption(context, "dark".tr, ThemeMode.dark),
-          ],
+        trailing: Switch(
+          value: value,
+          onChanged: onChanged,
+          activeColor: Colors.blue.shade700,
         ),
+        onTap: () => onChanged(!value),
       ),
     );
-  }
-
-  Widget _buildThemeOption(BuildContext context, String title, ThemeMode mode) {
-    final settingsController = Get.find<GeneralSettingsController>();
-    return Obx(() => ListTile(
-          title: Text(
-            title,
-            style: TextStyle(
-              color: settingsController.themeMode == mode
-                  ? settingsController.isDarkMode.value
-                      ? Colors.white
-                      : Colors.blue.shade700
-                  : settingsController.isDarkMode.value
-                      ? Colors.white70
-                      : Colors.black54,
-              fontWeight: settingsController.themeMode == mode
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-            ),
-          ),
-          trailing: settingsController.themeMode == mode
-              ? Icon(Icons.check_circle, color: Colors.blue.shade700)
-              : null,
-          onTap: () {
-            settingsController.setThemeMode(mode);
-            Get.back();
-          },
-        ));
   }
 }
