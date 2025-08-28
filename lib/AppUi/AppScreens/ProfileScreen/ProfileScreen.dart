@@ -9,6 +9,7 @@ import 'package:emvibe/AppUi/Controllers/chatbot_controller.dart';
 import 'PersonaSettingsPage.dart';
 import '../ProfileScreen/GeneralSettings/GeneralSettingsPage.dart';
 import 'package:emvibe/AppUi/Controllers/GeneralSettingsController.dart';
+import '../ProfileScreen/ProductivityToolsPage/ProductivityToolsPage.dart'; // ✅ ProductivityToolsPage import kiya hai
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -57,7 +58,7 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
           title: Text(
-            "profile".tr, // ✅ translated
+            "profile".tr,
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: textColor),
           ),
           backgroundColor: backgroundColor,
@@ -91,6 +92,16 @@ class ProfileScreen extends StatelessWidget {
                 Get.back();
                 Get.to(() => const PersonaSettingsPage());
               }, cardColor, textColor),
+              _buildSettingsItem(
+                context, 
+                Icons.workspaces_filled, // ✅ Naya icon
+                "Productivity / Tools", // ✅ Naya text
+                () {
+                  Get.to(() => const ProductivityToolsPage());
+                }, 
+                cardColor, 
+                textColor
+              ),
               _buildSettingsItem(context, Icons.phone, "phone_number".tr, () {}, cardColor, textColor),
               _buildSettingsItem(context, Icons.info_outline, "about".tr, () {}, cardColor, textColor),
               SizedBox(height: 20.h),
