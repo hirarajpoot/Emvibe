@@ -3,21 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // 🔥 NEW: Import for local notifications
 
 import 'AppUi/Controllers/chatbot_controller.dart';
 import 'AppUi/Controllers/GeneralSettingsController.dart';
 import 'AppUi/translations/app_translations.dart';
 import 'firebase_options.dart';
 import 'AppUi/AppScreens/chatbot/chatbot_page.dart';
-import 'AppUi/AppScreens/ProfileScreen/GeneralSettings/widgets/notification_service.dart'; // 🔥 New: Import NotificationService
+import 'AppUi/AppScreens/ProfileScreen/GeneralSettings/widgets/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // 🔥 New: Register the NotificationService
-  Get.put(NotificationService()); 
+  // 🔥 NEW: Register and initialize the NotificationService
+  final NotificationService notificationService = Get.put(NotificationService());
+  await notificationService.init(); // Initialize the service, including timezone setup
 
   runApp(const MyApp());
 }

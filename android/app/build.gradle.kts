@@ -27,7 +27,7 @@ android {
     defaultConfig {
         applicationId = "com.softedigi.emvibe"
         // YAHAN PE CHANGE KARO: minSdk 23 karo
-        minSdk = 23 // flutter.minSdkVersion ki jagah directly 23
+        minSdk = flutter.minSdkVersion // flutter.minSdkVersion ki jagah directly 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

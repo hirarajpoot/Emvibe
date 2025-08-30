@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'Reminder/create_reminder_page.dart';
-// import 'Reminder/get_reminders_page.dart';
-import 'Reminder/GetRemindersPage.dart';
-import 'Reminder/delete_reminder_page.dart';
-import '../../../Controllers/Reminder/reminder_controller.dart'; // ✅ Controller ko import kiya
+import 'Reminder/Tasks/create_reminder_page.dart';
+import 'Reminder/Tasks/GetRemindersPage.dart';
+import 'Reminder/Tasks/delete_reminder_page.dart';
+import '../../../Controllers/Reminder/reminder_controller.dart'; 
+import '../../../Controllers/note_controller.dart'; 
+import '../../../Controllers/todo_controller.dart'; 
+import 'Notes/create_note_page.dart'; 
+import 'Notes/get_notes_page.dart';
+import 'Notes/delete_note_page.dart';
+import 'Todo/add_todo_page.dart'; 
+import 'Todo/get_todos_page.dart';
+import 'Todo/update_todo_page.dart'; // Add this import
 
 class ProductivityToolsPage extends StatelessWidget {
   const ProductivityToolsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 Controller ko yahan initialize karein taake woh har jagah available ho
+    // 🔥 Controllers ko yahan initialize karein taake woh har jagah available ho
     Get.put(ReminderController());
-
+    Get.put(NoteController());
+    Get.put(TodoController());
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -53,13 +61,13 @@ class ProductivityToolsPage extends StatelessWidget {
               context,
               [
                 _buildToolCard(Icons.note_add, "Create Note", context, () {
-                  Get.snackbar("Coming Soon", "Create Note feature is not yet implemented.");
+                  Get.to(() => const CreateNotePage());
                 }),
                 _buildToolCard(Icons.notes, "Get Notes", context, () {
-                  Get.snackbar("Coming Soon", "Get Notes feature is not yet implemented.");
+                  Get.to(() => const GetNotesPage());
                 }),
                 _buildToolCard(Icons.note_alt_outlined, "Delete Note", context, () {
-                  Get.snackbar("Coming Soon", "Delete Note feature is not yet implemented.");
+                  Get.to(() => const DeleteNotesPage());
                 }),
               ],
             ),
@@ -71,13 +79,13 @@ class ProductivityToolsPage extends StatelessWidget {
               context,
               [
                 _buildToolCard(Icons.playlist_add, "Add To-Do", context, () {
-                  Get.snackbar("Coming Soon", "Add To-Do feature is not yet implemented.");
+                  Get.to(() => const AddTodoPage());
                 }),
                 _buildToolCard(Icons.format_list_bulleted, "Get To-Do List", context, () {
-                  Get.snackbar("Coming Soon", "Get To-Do List feature is not yet implemented.");
+                  Get.to(() => const GetTodosPage()); // View only page
                 }),
                 _buildToolCard(Icons.check_box, "Update To-Do", context, () {
-                  Get.snackbar("Coming Soon", "Update To-Do feature is not yet implemented.");
+                  Get.to(() => const UpdateTodoPage()); // Edit/Delete page
                 }),
               ],
             ),
@@ -88,7 +96,6 @@ class ProductivityToolsPage extends StatelessWidget {
   }
 
   Widget _buildSectionHeader(String title, BuildContext context) {
-    // ... (rest of the code is the same)
     return Padding(
       padding: EdgeInsets.only(bottom: 10.h),
       child: Text(
@@ -103,7 +110,6 @@ class ProductivityToolsPage extends StatelessWidget {
   }
 
   Widget _buildToolsGrid(BuildContext context, List<Widget> children) {
-    // ... (rest of the code is the same)
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -116,7 +122,6 @@ class ProductivityToolsPage extends StatelessWidget {
   }
 
   Widget _buildToolCard(IconData icon, String title, BuildContext context, VoidCallback onTap) {
-    // ... (rest of the code is the same)
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(15.r),

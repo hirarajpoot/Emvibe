@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
-import '../../../../../Controllers/Reminder/reminder_controller.dart'; 
+import '../../../../Controllers/note_controller.dart';
 
-class CreateReminderPage extends StatelessWidget {
-  const CreateReminderPage({super.key});
+class CreateNotePage extends StatelessWidget {
+  const CreateNotePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ReminderController reminderController = Get.put(ReminderController());
+    final NoteController noteController = Get.find();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Create Reminder".tr,
+          "Create Note".tr,
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -26,6 +25,7 @@ class CreateReminderPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Title Input Field
             Text(
               "Title".tr,
               style: TextStyle(
@@ -36,9 +36,9 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             TextFormField(
-              onChanged: reminderController.setTitle, 
+              onChanged: noteController.setTitle,
               decoration: InputDecoration(
-                hintText: "Enter reminder title".tr,
+                hintText: "Enter note title".tr,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
                   borderSide: BorderSide.none,
@@ -49,8 +49,9 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 20.h),
 
+            // Content Input Field
             Text(
-              "Description".tr,
+              "Content".tr,
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
@@ -59,10 +60,10 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             TextFormField(
-              onChanged: reminderController.setDescription, 
-              maxLines: 4,
+              onChanged: noteController.setContent,
+              maxLines: 10,
               decoration: InputDecoration(
-                hintText: "Enter a brief description".tr,
+                hintText: "Write your note here".tr,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
                   borderSide: BorderSide.none,
@@ -71,53 +72,13 @@ class CreateReminderPage extends StatelessWidget {
                 fillColor: Theme.of(context).cardColor,
               ),
             ),
-            SizedBox(height: 20.h),
-
-            Text(
-              "Date & Time".tr,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Obx(
-              () => Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => reminderController.selectDateTime(context), 
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.calendar_today, size: 20.w),
-                            SizedBox(width: 10.w),
-                            Text(
-                              reminderController.selectedDateTime.value == null
-                                  ? "Select Date & Time".tr
-                                  : DateFormat.yMMMd().add_jm().format(reminderController.selectedDateTime.value!),
-                              style: TextStyle(fontSize: 14.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             SizedBox(height: 30.h),
 
+            // Save Note Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: reminderController.createReminder, 
+                onPressed: noteController.createNote,
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   shape: RoundedRectangleBorder(
@@ -126,7 +87,7 @@ class CreateReminderPage extends StatelessWidget {
                   backgroundColor: Theme.of(context).primaryColor,
                 ),
                 child: Text(
-                  "Save Reminder".tr,
+                  "Save Note".tr,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,

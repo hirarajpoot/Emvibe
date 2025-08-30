@@ -1,16 +1,19 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-// import 'dart:async';
 import 'package:uuid/uuid.dart';
 
-import '../../Models/reminder_model.dart';
+import '../../Models/reminder_model.dart'; // Assuming this path is correct
+import '../../AppScreens/ProfileScreen/GeneralSettings/widgets/notification_service.dart'; // Import the NotificationService
 
 class ReminderController extends GetxController {
   final RxString title = ''.obs;
   final RxString description = ''.obs;
   final Rx<DateTime?> selectedDateTime = Rx<DateTime?>(null);
-  
+
   final RxList<Reminder> reminders = <Reminder>[].obs;
+
+  // 🔥 NEW: Get an instance of NotificationService
+  final NotificationService _notificationService = Get.find<NotificationService>();
 
   void setTitle(String value) {
     title.value = value;
@@ -29,11 +32,10 @@ class ReminderController extends GetxController {
     );
 
     if (pickedDate != null) {
-      // Keep existing time if it exists, otherwise use current time
       final TimeOfDay initialTime = selectedDateTime.value != null
           ? TimeOfDay.fromDateTime(selectedDateTime.value!)
           : TimeOfDay.now();
-      
+
       selectedDateTime.value = DateTime(
         pickedDate.year,
         pickedDate.month,
@@ -69,7 +71,7 @@ class ReminderController extends GetxController {
     if (title.isEmpty || selectedDateTime.value == null) {
       Get.snackbar(
         "Error".tr,
-        "Please fill in all fields.".tr,
+        "Please fill in all fields (title and date/time).".tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -80,12 +82,20 @@ class ReminderController extends GetxController {
     final newReminder = Reminder(
       id: const Uuid().v4(),
       title: title.value,
-      description: description.value,
+      description: description.value.isEmpty ? "No description provided." : description.value, // Default description if empty
       reminderDateTime: selectedDateTime.value!,
     );
 
     reminders.add(newReminder);
-    reminders.refresh();
+    // reminders.refresh(); // No need for explicit refresh for RxList add/remove
+
+    // 🔥 NEW: Schedule the local notification
+    _notificationService.scheduleNotification(
+      id: newReminder.id.hashCode, // Use a unique ID for the notification
+      title: newReminder.title,
+      body: newReminder.description,
+      scheduledDateTime: newReminder.reminderDateTime,
+    );
 
     // Reset fields after creating a reminder
     title.value = '';
@@ -94,10 +104,17 @@ class ReminderController extends GetxController {
 
     Get.snackbar(
       "Success".tr,
-      "Reminder created successfully!".tr,
+      "Reminder created and scheduled!".tr,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.green,
       colorText: Colors.white,
     );
+  }
+
+  void deleteReminder(String id) {
+    reminders.removeWhere((reminder) => reminder.id == id);
+    reminders.refresh(); // Explicit refresh might be useful here if other parts depend on it immediately
+    // 🔥 NEW: Cancel the corresponding notification
+    _notificationService.flutterLocalNotificationsPlugin.cancel(id.hashCode);
   }
 }

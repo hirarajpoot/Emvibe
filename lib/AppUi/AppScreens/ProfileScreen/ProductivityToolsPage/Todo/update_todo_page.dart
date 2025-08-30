@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../../../../Controllers/Reminder/reminder_controller.dart';
 
-class GetRemindersPage extends StatelessWidget {
-  const GetRemindersPage({super.key});
+import '../../../../Controllers/todo_controller.dart';
+import 'edit_todo_page.dart'; 
+
+class UpdateTodoPage extends StatelessWidget {
+  const UpdateTodoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ReminderController reminderController = Get.find();
+    final TodoController todoController = Get.find();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "My Reminders".tr,
+          "Update To-Do".tr,
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -22,20 +24,19 @@ class GetRemindersPage extends StatelessWidget {
       ),
       body: Obx(
         () {
-          // Check if the reminders list is empty
-          if (reminderController.reminders.isEmpty) {
+          if (todoController.todos.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.alarm_off,
+                    Icons.check_box_outline_blank,
                     size: 80.w,
                     color: Theme.of(context).primaryColor.withOpacity(0.5),
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    "No reminders yet.".tr,
+                    "No to-dos yet.".tr,
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.6),
@@ -43,7 +44,7 @@ class GetRemindersPage extends StatelessWidget {
                   ),
                   SizedBox(height: 5.h),
                   Text(
-                    "Create a new reminder to see it here.".tr,
+                    "Add a new to-do to update it.".tr,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -54,12 +55,11 @@ class GetRemindersPage extends StatelessWidget {
               ),
             );
           }
-          // Display the list of reminders
           return ListView.builder(
             padding: EdgeInsets.all(16.w),
-            itemCount: reminderController.reminders.length,
+            itemCount: todoController.todos.length,
             itemBuilder: (context, index) {
-              final reminder = reminderController.reminders[index];
+              final todo = todoController.todos[index];
               return Card(
                 color: Theme.of(context).cardColor,
                 elevation: 2,
@@ -69,48 +69,46 @@ class GetRemindersPage extends StatelessWidget {
                 ),
                 child: ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  leading: Checkbox(
+                    value: todo.isCompleted,
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        todoController.updateTodoStatus(todo.id, value);
+                      }
+                    },
+                    activeColor: Theme.of(context).primaryColor,
+                  ),
                   title: Text(
-                    reminder.title,
+                    todo.title,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
+                      decoration: todo.isCompleted ? TextDecoration.lineThrough : null,
+                      decorationColor: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  subtitle: Text(
+                    DateFormat.yMMMd().format(todo.createdDate),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.7),
+                    ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(height: 4.h),
-                      Text(
-                        reminder.description,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.7),
-                        ),
+                      IconButton(
+                        icon: Icon(Icons.edit, size: 20.w),
+                        onPressed: () {
+                          Get.to(() => EditTodoPage(todo: todo));
+                        },
                       ),
-                      SizedBox(height: 8.h),
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_today, size: 14.w, color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.5)),
-                          SizedBox(width: 5.w),
-                          Text(
-                            DateFormat.yMMMd().format(reminder.reminderDateTime),
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.7),
-                            ),
-                          ),
-                          SizedBox(width: 10.w),
-                          Icon(Icons.access_time, size: 14.w, color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.5)),
-                          SizedBox(width: 5.w),
-                          Text(
-                            DateFormat.jm().format(reminder.reminderDateTime),
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
+                      IconButton(
+                        icon: Icon(Icons.delete, size: 20.w, color: Colors.red),
+                        onPressed: () {
+                          todoController.showDeleteConfirmation(todo.id);
+                        },
                       ),
                     ],
                   ),

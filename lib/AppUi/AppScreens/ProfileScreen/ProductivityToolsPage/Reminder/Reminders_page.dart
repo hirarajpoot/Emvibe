@@ -26,7 +26,6 @@ class CreateReminderPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title Input Field
             Text(
               "Title".tr,
               style: TextStyle(
@@ -37,7 +36,7 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             TextFormField(
-              onChanged: reminderController.setTitle,
+              onChanged: reminderController.setTitle, 
               decoration: InputDecoration(
                 hintText: "Enter reminder title".tr,
                 border: OutlineInputBorder(
@@ -50,7 +49,6 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 20.h),
 
-            // Description Input Field
             Text(
               "Description".tr,
               style: TextStyle(
@@ -61,7 +59,7 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             TextFormField(
-              onChanged: reminderController.setDescription,
+              onChanged: reminderController.setDescription, 
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: "Enter a brief description".tr,
@@ -75,7 +73,6 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 20.h),
 
-            // Date and Time Picker
             Text(
               "Date & Time".tr,
               style: TextStyle(
@@ -86,67 +83,41 @@ class CreateReminderPage extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Obx(
-              () {
-                String dateText = "Select Date".tr;
-                String timeText = "Select Time".tr;
-
-                if (reminderController.selectedDateTime.value != null) {
-                  dateText = DateFormat.yMMMd().format(reminderController.selectedDateTime.value!);
-                  timeText = DateFormat.jm().format(reminderController.selectedDateTime.value!);
-                }
-                
-                return Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => reminderController.selectDate(context),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.calendar_today, size: 20.w),
-                              SizedBox(width: 10.w),
-                              Text(dateText, style: TextStyle(fontSize: 14.sp)),
-                            ],
-                          ),
+              () => Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      // onTap: () => reminderController.selectDateTime(context), 
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, size: 20.w),
+                            SizedBox(width: 10.w),
+                            Text(
+                              reminderController.selectedDateTime.value == null
+                                  ? "Select Date & Time".tr
+                                  : DateFormat.yMMMd().add_jm().format(reminderController.selectedDateTime.value!),
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => reminderController.selectTime(context),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.access_time, size: 20.w),
-                              SizedBox(width: 10.w),
-                              Text(timeText, style: TextStyle(fontSize: 14.sp)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 30.h),
 
-            // Save Reminder Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: reminderController.createReminder,
+                onPressed: reminderController.createReminder, 
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   shape: RoundedRectangleBorder(
