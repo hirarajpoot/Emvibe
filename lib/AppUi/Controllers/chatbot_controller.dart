@@ -48,6 +48,9 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
   final RxList<ChatSession> chatHistory = <ChatSession>[].obs;
   final RxInt currentChatSessionIndex = RxInt(-1);
   final RxBool isCurrentSessionIncognito = false.obs;
+  
+  // New list for saved messages
+  final RxList<Message> savedMessages = <Message>[].obs;
 
   @override
   void onInit() {
@@ -91,7 +94,7 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
       hasText.value = textController.text.trim().isNotEmpty;
     });
 
-    _addInitialMessage();
+    // We no longer add a greeting here. The startNewChat() method handles it.
   }
 
   @override
@@ -110,10 +113,6 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.paused) {
       isAppInForeground.value = false;
     }
-  }
-
-  void _addInitialMessage() async {
-    messages.add(Message.textMsg('initial_greeting'.tr, isUser: false));
   }
 
   void toggleAttachment() {
@@ -180,7 +179,8 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
     try {
       final detection = await translator.translate(text);
       userLanguage.value = detection.sourceLanguage.code;
-      Get.updateLocale(Locale(userLanguage.value));
+      // Removed the line below which was causing the issue:
+      // Get.updateLocale(Locale(userLanguage.value)); 
     } catch (e) {
       log('Error detecting language: $e');
     }
@@ -204,8 +204,14 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
   void renameChatSession(ChatSession sessionToRename, String newName) => _chatHistoryManager.renameChatSession(sessionToRename, newName);
   void togglePinStatus(ChatSession sessionToToggle) => _chatHistoryManager.togglePinStatus(sessionToToggle);
   Future<void> shareChatSession(ChatSession sessionToShare) => _chatHistoryManager.shareChatSession(sessionToShare);
-  void startIncognitoChat() => _chatHistoryManager.startIncognitoChat();
-  void startNewChat() => _chatHistoryManager.startNewChat();
+
+  void startNewIncognitoChat() {
+    _chatHistoryManager.startIncognitoChat();
+  }
+  
+  void startNewChat() {
+    _chatHistoryManager.startNewChat();
+  }
 
   void updatePersona(String newPersona) {
     currentPersona.value = newPersona;
@@ -214,4 +220,38 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
 
   Future<void> pickFromCamera() async => await _attachmentService.pickFromCamera();
   Future<void> pickDocument() async => await _attachmentService.pickDocument();
+  
+  // New method to save a message to the 'Book'
+  void saveMessage(Message message) {
+    if (!savedMessages.contains(message)) {
+      savedMessages.add(message);
+      // Get.snackbar(
+      //   "Message Saved",
+      //   "The message has been saved to your Book.",
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   backgroundColor: Colors.green,
+      //   colorText: Colors.white,
+      // );
+    } else {
+      // Get.snackbar(
+      //   "Already Saved",
+      //   "This message is already in your Book.",
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   backgroundColor: Colors.yellow.shade700,
+      //   colorText: Colors.black,
+      // );
+    }
+  }
+  
+  // New method to delete a message from the 'Book'
+  void deleteSavedMessage(Message message) {
+    savedMessages.remove(message);
+    // Get.snackbar(
+    //   "Message Removed",
+    //   "The message has been removed from your Book.",
+    //   snackPosition: SnackPosition.BOTTOM,
+    //   backgroundColor: Colors.red,
+    //   colorText: Colors.white,
+    // );
+  }
 }
