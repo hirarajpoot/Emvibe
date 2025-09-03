@@ -1,12 +1,14 @@
+import 'package:emvibe/AppUi/AppScreens/Auth/SplashScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // 🔥 NEW: Import for local notifications
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'AppUi/Controllers/chatbot_controller.dart';
 import 'AppUi/Controllers/GeneralSettingsController.dart';
+import 'AppUi/Controllers/subscription_controller.dart';
 import 'AppUi/translations/app_translations.dart';
 import 'firebase_options.dart';
 import 'AppUi/AppScreens/chatbot/chatbot_page.dart';
@@ -14,12 +16,18 @@ import 'AppUi/AppScreens/ProfileScreen/GeneralSettings/widgets/notification_serv
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await GetStorage.init();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // 🔥 NEW: Register and initialize the NotificationService
+  // ✅ GetStorage initialize
+  await GetStorage.init();
+
+  // ✅ Firebase initialize (zaroori for Auth + Firestore)
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // ✅ Local notifications init
   final NotificationService notificationService = Get.put(NotificationService());
-  await notificationService.init(); // Initialize the service, including timezone setup
+  await notificationService.init();
 
   runApp(const MyApp());
 }
@@ -29,10 +37,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize controllers here instead of in main()
+    // ✅ Controllers register
     Get.put(GeneralSettingsController());
     Get.put(ChatBotController());
-    
+    Get.put(SubscriptionController());
+
     final settingsController = Get.find<GeneralSettingsController>();
 
     return ScreenUtilInit(
@@ -50,7 +59,8 @@ class MyApp extends StatelessWidget {
             themeMode: settingsController.themeMode.value,
             theme: _buildLightTheme(),
             darkTheme: _buildDarkTheme(),
-            home: const ChatBotPage(),
+            home: const SplashScreen(), // ✅ Start from Splash
+            // home: const ChatBotPage(), // Debug ke liye direct chatbot
           );
         });
       },

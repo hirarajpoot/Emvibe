@@ -41,7 +41,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             SizedBox(width: 6.w),
             Text(
-              "app_name".tr, // Corrected key to lowercase
+              "app_name".tr,
               style: TextStyle(
                 color: textColor,
                 fontSize: 16.sp,
@@ -57,7 +57,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Text(
                 chatController.currentChatSessionIndex.value == -1
-                    ? ""
+                    ? "" // Removed "new_chat_title" text
                     : chatController.getSortedChatSessions()[chatController.currentChatSessionIndex.value].customTitle.value,
                 style: TextStyle(
                   color: textColor,
@@ -67,18 +67,40 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               if (chatController.isCurrentSessionIncognito.value)
-                Text(
-                  "incognito".tr, // Corrected key to lowercase
-                  style: TextStyle(
-                    color: incognitoColor,
-                    fontSize: 10.sp,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                SizedBox.shrink(), // Removed "incognito" text
             ],
           )),
       centerTitle: false,
       actions: [
+        Container(
+          margin: EdgeInsets.only(right: 6.w),
+          child: ElevatedButton(
+            onPressed: () {
+              chatController.startNewIncognitoChat();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey.shade600,
+              padding: EdgeInsets.symmetric(
+                horizontal: 10.w,
+                vertical: 4.h,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+              elevation: 0,
+              minimumSize: Size(60.w, 28.h),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              "incognito".tr,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
         Container(
           margin: EdgeInsets.only(right: 12.w),
           child: ElevatedButton(
@@ -99,7 +121,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              "new_chat".tr, // Corrected key to lowercase
+              "new_chat".tr,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 11.sp,

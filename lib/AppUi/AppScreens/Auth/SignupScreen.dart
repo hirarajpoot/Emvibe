@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'LoginScreen.dart';
 import '../chatbot/chatbot_page.dart';
+import 'Adminpanal/admin_panel_screen.dart';
 
 class SignupController extends GetxController {
   final emailController = TextEditingController();
@@ -77,19 +80,39 @@ class SignupController extends GetxController {
 
     isLoading.value = true;
     try {
-      await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      Get.snackbar(
-        "Success",
-        "Account created! Please login.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green.withOpacity(0.8),
-        colorText: Colors.white,
-      );
-      Get.offAll(() => const LoginScreen());
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'uid': user.uid,
+          'email': user.email,
+          'role': 'user',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        // ✅ Loading stop
+        isLoading.value = false;
+
+        // ✅ Signup ke baad LoginScreen pe bhejo
+        Get.offAll(() => const LoginScreen());
+
+        Get.snackbar(
+          "Success",
+          "Account created successfully. Please login.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+      }
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false; // ❌ error pe bhi band karo
+
       String genericErrorMessage = "Sign Up failed. Please try again.";
       if (e.code == 'weak-password') {
         passwordError.value = "Password is too weak.";
@@ -112,6 +135,7 @@ class SignupController extends GetxController {
         );
       }
     } catch (e) {
+      isLoading.value = false; // ❌ catch me bhi
       Get.snackbar(
         "Error",
         "An unexpected error occurred: $e",
@@ -119,8 +143,6 @@ class SignupController extends GetxController {
         backgroundColor: Colors.red.withOpacity(0.8),
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 
@@ -140,16 +162,38 @@ class SignupController extends GetxController {
         idToken: googleAuth.idToken,
       );
 
-      await _auth.signInWithCredential(credential);
-      Get.snackbar(
-        "Success",
-        "Logged in/signed up with Google successfully!",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green.withOpacity(0.8),
-        colorText: Colors.white,
-      );
-      Get.offAll(() => const ChatBotPage());
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      User? user = userCredential.user;
+
+      if (user != null) {
+        DocumentSnapshot doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (!doc.exists) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'uid': user.uid,
+            'email': user.email,
+            'role': 'user',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        isLoading.value = false;
+
+        if (user.email == "admin@gmail.com") {
+          Get.offAll(() => const AdminPanelScreen());
+        } else {
+          Get.offAll(() => const ChatBotPage());
+        }
+      }
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         "Error",
         "Google sign-in failed: ${e.message}",
@@ -158,6 +202,7 @@ class SignupController extends GetxController {
         colorText: Colors.white,
       );
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         "Error",
         "An unexpected error occurred during Google sign-in: $e",
@@ -165,8 +210,6 @@ class SignupController extends GetxController {
         backgroundColor: Colors.red.withOpacity(0.8),
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 
@@ -199,7 +242,7 @@ class SignupScreen extends StatelessWidget {
     final SignupController signupController = Get.put(SignupController());
 
     return Scaffold(
-      backgroundColor: Color(0xFFF0F4F8),
+      backgroundColor: const Color(0xFFF0F4F8),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
@@ -213,7 +256,7 @@ class SignupScreen extends StatelessWidget {
                 child: Text(
                   "Emvibe",
                   style: TextStyle(
-                    color: Color(0xFF1A237E),
+                    color: const Color(0xFF1A237E),
                     fontSize: 32.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -221,7 +264,6 @@ class SignupScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 50.h),
-
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -237,59 +279,46 @@ class SignupScreen extends StatelessWidget {
 
               // Email Input
               Obx(
-                () => Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: signupController.emailError.value.isNotEmpty
-                          ? Colors.red
-                          : Colors.transparent,
-                      width: 1.5,
+                () => TextField(
+                  controller: signupController.emailController,
+                  style: TextStyle(color: Colors.black, fontSize: 16.sp),
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged: (value) => signupController.emailError.value = '',
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    labelStyle: TextStyle(color: Colors.grey.shade600),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.grey.shade500,
                     ),
-                  ),
-                  child: TextField(
-                    controller: signupController.emailController,
-                    style: TextStyle(color: Colors.black, fontSize: 16.sp),
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (value) =>
-                        signupController.emailError.value = '',
-                    decoration: InputDecoration(
-                      labelText: "Email",
-                      labelStyle: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14.sp,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade400,
-                        fontSize: 14.sp,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.email,
-                        color: Colors.grey.shade500,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 14.h,
-                        horizontal: 16.w,
-                      ),
-                      border: InputBorder.none,
-                      errorText: signupController.emailError.value.isEmpty
-                          ? null
-                          : signupController.emailError.value,
-                      errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
-
-                      /// 🚀 Fix: Always white background
-                      filled: true,
-                      fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 16.w,
                     ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 1.5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide(
+                        color: signupController.emailError.value.isNotEmpty
+                            ? Colors.red
+                            : Colors.grey.shade300,
+                        width: 1.5,
+                      ),
+                    ),
+                    errorText: signupController.emailError.value.isEmpty
+                        ? null
+                        : signupController.emailError.value,
+                    errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
                   ),
                 ),
               ),
@@ -297,65 +326,53 @@ class SignupScreen extends StatelessWidget {
 
               // Password Input
               Obx(
-                () => Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
+                () => TextField(
+                  controller: signupController.passwordController,
+                  style: TextStyle(color: Colors.black, fontSize: 16.sp),
+                  obscureText: !signupController.isPasswordVisible,
+                  onChanged: (value) =>
+                      signupController.passwordError.value = '',
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    labelStyle: TextStyle(color: Colors.grey.shade600),
+                    prefixIcon: Icon(Icons.lock, color: Colors.grey.shade500),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        signupController.isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey.shade500,
                       ),
-                    ],
-                    border: Border.all(
-                      color: signupController.passwordError.value.isNotEmpty
-                          ? Colors.red
-                          : Colors.transparent,
-                      width: 1.5,
+                      onPressed: signupController.togglePasswordVisibility,
                     ),
-                  ),
-                  child: TextField(
-                    controller: signupController.passwordController,
-                    style: TextStyle(color: Colors.black, fontSize: 16.sp),
-                    obscureText: !signupController.isPasswordVisible,
-                    onChanged: (value) =>
-                        signupController.passwordError.value = '',
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      labelStyle: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14.sp,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade400,
-                        fontSize: 14.sp,
-                      ),
-                      prefixIcon: Icon(Icons.lock, color: Colors.grey.shade500),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          signupController.isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey.shade500,
-                        ),
-                        onPressed: signupController.togglePasswordVisibility,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 14.h,
-                        horizontal: 16.w,
-                      ),
-                      border: InputBorder.none,
-                      errorText: signupController.passwordError.value.isEmpty
-                          ? null
-                          : signupController.passwordError.value,
-                      errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
-
-                      /// 🚀 Fix
-                      filled: true,
-                      fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 16.w,
                     ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 1.5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide(
+                        color: signupController.passwordError.value.isNotEmpty
+                            ? Colors.red
+                            : Colors.grey.shade300,
+                        width: 1.5,
+                      ),
+                    ),
+                    errorText: signupController.passwordError.value.isEmpty
+                        ? null
+                        : signupController.passwordError.value,
+                    errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
                   ),
                 ),
               ),
@@ -363,68 +380,56 @@ class SignupScreen extends StatelessWidget {
 
               // Confirm Password Input
               Obx(
-                () => Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
+                () => TextField(
+                  controller: signupController.confirmPasswordController,
+                  style: TextStyle(color: Colors.black, fontSize: 16.sp),
+                  obscureText: !signupController.isConfirmPasswordVisible,
+                  onChanged: (value) =>
+                      signupController.confirmPasswordError.value = '',
+                  decoration: InputDecoration(
+                    labelText: "Confirm Password",
+                    labelStyle: TextStyle(color: Colors.grey.shade600),
+                    prefixIcon: Icon(Icons.lock, color: Colors.grey.shade500),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        signupController.isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey.shade500,
                       ),
-                    ],
-                    border: Border.all(
-                      color:
-                          signupController.confirmPasswordError.value.isNotEmpty
-                          ? Colors.red
-                          : Colors.transparent,
-                      width: 1.5,
+                      onPressed:
+                          signupController.toggleConfirmPasswordVisibility,
                     ),
-                  ),
-                  child: TextField(
-                    controller: signupController.confirmPasswordController,
-                    style: TextStyle(color: Colors.black, fontSize: 16.sp),
-                    obscureText: !signupController.isConfirmPasswordVisible,
-                    onChanged: (value) =>
-                        signupController.confirmPasswordError.value = '',
-                    decoration: InputDecoration(
-                      labelText: "Confirm Password",
-                      labelStyle: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14.sp,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade400,
-                        fontSize: 14.sp,
-                      ),
-                      prefixIcon: Icon(Icons.lock, color: Colors.grey.shade500),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          signupController.isConfirmPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey.shade500,
-                        ),
-                        onPressed:
-                            signupController.toggleConfirmPasswordVisibility,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 14.h,
-                        horizontal: 16.w,
-                      ),
-                      border: InputBorder.none,
-                      errorText:
-                          signupController.confirmPasswordError.value.isEmpty
-                          ? null
-                          : signupController.confirmPasswordError.value,
-                      errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
-
-                      /// 🚀 Fix
-                      filled: true,
-                      fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 16.w,
                     ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 1.5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide(
+                        color: signupController
+                                .confirmPasswordError.value.isNotEmpty
+                            ? Colors.red
+                            : Colors.grey.shade300,
+                        width: 1.5,
+                      ),
+                    ),
+                    errorText:
+                        signupController.confirmPasswordError.value.isEmpty
+                            ? null
+                            : signupController.confirmPasswordError.value,
+                    errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
                   ),
                 ),
               ),
@@ -436,9 +441,7 @@ class SignupScreen extends StatelessWidget {
                       ? null
                       : () => signupController.signUpWithEmailAndPassword(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(
-                      0xFF1A237E,
-                    ), // 🚀 Dark Blue Fixed Color
+                    backgroundColor: const Color(0xFF1A237E),
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 16.h),
                     shape: RoundedRectangleBorder(
@@ -452,7 +455,7 @@ class SignupScreen extends StatelessWidget {
                     minimumSize: Size(double.infinity, 52.h),
                   ),
                   child: signupController.isLoading.value
-                      ? CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
                           "Sign Up",
                           style: TextStyle(
@@ -548,7 +551,7 @@ class SignupScreen extends StatelessWidget {
                       TextSpan(
                         text: "Login here",
                         style: TextStyle(
-                          color: Color(0xFF1A237E),
+                          color: const Color(0xFF1A237E),
                           fontWeight: FontWeight.bold,
                           fontSize: 14.sp,
                         ),

@@ -51,7 +51,7 @@ class ResetPasswordController extends GetxController {
         duration: const Duration(seconds: 5),
       );
       // 🔥 Email send hone ke baad LoginScreen par wapas bhej dein
-      Get.offAll(() => const LoginScreen()); 
+      Get.offAll(() => const LoginScreen());
     } on FirebaseAuthException catch (e) {
       String errorMessage = "Failed to send reset email. Please try again.";
       if (e.code == 'user-not-found') {
@@ -63,7 +63,7 @@ class ResetPasswordController extends GetxController {
       }
 
       if (errorMessage.isNotEmpty) {
-         Get.snackbar(
+        Get.snackbar(
           "Error",
           errorMessage,
           snackPosition: SnackPosition.BOTTOM,
@@ -90,14 +90,16 @@ class ResetPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ResetPasswordController resetController = Get.put(ResetPasswordController());
+    final ResetPasswordController resetController =
+        Get.put(ResetPasswordController());
 
     return Scaffold(
-      backgroundColor: Color(0xFFF0F4F8), // Light grey background
+      backgroundColor: const Color(0xFFF0F4F8), // Light grey background
       appBar: AppBar(
-        backgroundColor: Color(0xFFF0F4F8), // AppBar ka background bhi light grey
+        backgroundColor: const Color(0xFFF0F4F8), // AppBar ka background bhi light grey
         elevation: 0,
-        leading: IconButton( // Back button
+        leading: IconButton(
+          // Back button
           icon: Icon(Icons.arrow_back, color: Colors.grey.shade800),
           onPressed: () => Get.back(), // Pichli screen par wapas jane ke liye
         ),
@@ -115,7 +117,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 child: Text(
                   "Emvibe",
                   style: TextStyle(
-                    color: Color(0xFF1A237E),
+                    color: const Color(0xFF1A237E),
                     fontSize: 32.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -123,7 +125,6 @@ class ResetPasswordScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 50.h),
-
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -149,53 +150,79 @@ class ResetPasswordScreen extends StatelessWidget {
               SizedBox(height: 30.h),
 
               // Email Input with custom box decoration and inline error
-              Obx(() => Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: resetController.emailError.value.isNotEmpty
-                        ? Colors.red
-                        : Colors.transparent,
-                    width: 1.5,
-                  ),
-                ),
-                child: TextField(
+              Obx(
+                () => TextField(
                   controller: resetController.emailController,
                   style: TextStyle(color: Colors.black, fontSize: 16.sp),
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) => resetController.emailError.value = '',
                   decoration: InputDecoration(
                     labelText: "Email",
-                    prefixIcon: Icon(Icons.email, color: Colors.grey.shade500),
-                    contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
-                    border: InputBorder.none,
+                    labelStyle: TextStyle(color: Colors.grey.shade600),
+                    prefixIcon:
+                        Icon(Icons.email, color: Colors.grey.shade500),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 1.5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                      borderSide: BorderSide(
+                        color: resetController.emailError.value.isNotEmpty
+                            ? Colors.red
+                            : Colors.grey.shade300,
+                        width: 1.5,
+                      ),
+                    ),
                     errorText: resetController.emailError.value.isEmpty
                         ? null
                         : resetController.emailError.value,
                     errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
                   ),
                 ),
-              )),
+              ),
               SizedBox(height: 30.h),
 
-              Obx(() => ElevatedButton(
-                onPressed: resetController.isLoading.value ? null : () => resetController.sendPasswordResetEmail(),
-                child: resetController.isLoading.value
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                        "Send Reset Link",
-                        style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
-                      ),
-              )),
+              Obx(
+                () => ElevatedButton(
+                  onPressed: resetController.isLoading.value
+                      ? null
+                      : () => resetController.sendPasswordResetEmail(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1A237E),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    textStyle: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    elevation: 0,
+                    minimumSize: Size(double.infinity, 52.h),
+                  ),
+                  child: resetController.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          "Send Reset Link",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
               SizedBox(height: 30.h),
             ],
           ),

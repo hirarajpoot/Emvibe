@@ -31,6 +31,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true  // 🔥 Add this line for multidex
     }
 
     buildTypes {
@@ -49,4 +50,5 @@ flutter {
 dependencies {
     // 🔥 Added for Java 8 desugaring (Kotlin syntax)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
+    implementation("androidx.multidex:multidex:2.0.1")  // 🔥 Add this line for multidex
 }

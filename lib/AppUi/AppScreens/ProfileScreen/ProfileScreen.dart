@@ -4,12 +4,15 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 
-import 'package:emvibe/AppUi/AppScreens/chatbot/chatbot_page.dart'; 
-import 'package:emvibe/AppUi/Controllers/chatbot_controller.dart'; 
+// import 'package:emvibe/AppUi/AppScreens/chatbot/chatbot_page.dart';
+import 'package:emvibe/AppUi/Controllers/chatbot_controller.dart';
 import 'PersonaSettingsPage.dart';
 import '../ProfileScreen/GeneralSettings/GeneralSettingsPage.dart';
 import 'package:emvibe/AppUi/Controllers/GeneralSettingsController.dart';
-import '../ProfileScreen/ProductivityToolsPage/ProductivityToolsPage.dart'; // ✅ ProductivityToolsPage import kiya hai
+import '../ProfileScreen/ProductivityToolsPage/ProductivityToolsPage.dart';
+
+// Import the new SubscriptionPage
+import '../ProfileScreen/SubscriptionPage/SubscriptionPage.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -79,27 +82,25 @@ class ProfileScreen extends StatelessWidget {
                 Get.to(() => const GeneralSettingsPage());
               }, cardColor, textColor),
               _buildSettingsItem(context, Icons.security, "security".tr, () {}, cardColor, textColor),
-              _buildSettingsItem(context, Icons.credit_card, "subscriptions".tr, () {}, cardColor, textColor),
+              // Updated: Navigate to the SubscriptionPage
+              _buildSettingsItem(context, Icons.credit_card, "subscriptions".tr, () {
+                Get.to(() => const SubscriptionPage());
+              }, cardColor, textColor),
               SizedBox(height: 20.h),
 
               _buildSectionHeader("advanced".tr, textColor),
-              _buildSettingsItem(context, Icons.visibility_off, "incognito_chat".tr, () {
-                chatController.startIncognitoChat();
-                Get.back();
-                Get.to(() => const ChatBotPage());
-              }, cardColor, textColor),
               _buildSettingsItem(context, Icons.palette_outlined, "change_persona".tr, () {
                 Get.back();
                 Get.to(() => const PersonaSettingsPage());
               }, cardColor, textColor),
               _buildSettingsItem(
-                context, 
-                Icons.workspaces_filled, // ✅ Naya icon
-                "Productivity / Tools", // ✅ Naya text
+                context,
+                Icons.workspaces_filled,
+                "Productivity / Tools",
                 () {
                   Get.to(() => const ProductivityToolsPage());
-                }, 
-                cardColor, 
+                },
+                cardColor,
                 textColor
               ),
               _buildSettingsItem(context, Icons.phone, "phone_number".tr, () {}, cardColor, textColor),

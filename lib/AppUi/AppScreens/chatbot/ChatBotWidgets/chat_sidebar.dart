@@ -9,6 +9,7 @@ import '../../DashboardScreen/dashboard_screen.dart';
 import '../../../Controllers/chatbot_controller.dart';
 import '../../../Controllers/GeneralSettingsController.dart';
 import '../../ProfileScreen/ProfileScreen.dart';
+import 'saved_messages_page.dart'; // Make sure this import is correct
 
 class ChatSidebar extends StatelessWidget {
   const ChatSidebar({super.key});
@@ -55,7 +56,7 @@ class ChatSidebar extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    "app_name".tr, // Fixed translation
+                                    "app_name".tr,
                                     style: TextStyle(
                                       color: textIconColor,
                                       fontSize: 20.sp,
@@ -75,20 +76,20 @@ class ChatSidebar extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
                             child: Text(
-                              "main".tr, // Fixed translation
+                              "main".tr,
                               style: TextStyle(color: sectionTextColor, fontSize: 12.sp),
                             ),
                           ),
                           _sidebarItem(
-                              context,
-                              Icons.chat_bubble_outline,
-                              "Chatbot".tr, // Fixed translation
-                              () {
-                                Navigator.of(context).pop();
-                                Get.to(() => const ChatBotPage());
-                              },
-                              textIconColor: textIconColor
-                              ),
+                            context,
+                            Icons.chat_bubble_outline,
+                            "Chatbot".tr,
+                            () {
+                              Navigator.of(context).pop();
+                              Get.to(() => const ChatBotPage());
+                            },
+                            textIconColor: textIconColor,
+                          ),
 
                           Theme(
                             data: Theme.of(context).copyWith(
@@ -102,16 +103,19 @@ class ChatSidebar extends StatelessWidget {
                             ),
                             child: ExpansionTile(
                               leading: Icon(Icons.history, color: textIconColor),
-                              title: Text("recent_chats".tr, style: TextStyle(color: textIconColor)), // Fixed translation
+                              title: Text("recent_chats".tr, style: TextStyle(color: textIconColor)),
                               childrenPadding: EdgeInsets.only(left: 20.w),
                               children: [
                                 Obx(() {
                                   final sortedChatSessions = c.getSortedChatSessions();
                                   if (sortedChatSessions.isEmpty) {
                                     return _sidebarItem(
-                                        context, Icons.info_outline, "no_recent_chats".tr, () {}, // Fixed translation
-                                        textIconColor: textIconColor
-                                        );
+                                      context,
+                                      Icons.info_outline,
+                                      "no_recent_chats".tr,
+                                      () {},
+                                      textIconColor: textIconColor,
+                                    );
                                   }
                                   return Column(
                                     children: List.generate(sortedChatSessions.length, (index) {
@@ -147,7 +151,7 @@ class ChatSidebar extends StatelessWidget {
                                                         TextEditingController(text: chatSession.customTitle.value);
                                                     Get.defaultDialog(
                                                       backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                                                      title: "rename_chat".tr, // Fixed translation
+                                                      title: "rename_chat".tr,
                                                       titleStyle: TextStyle(
                                                           color: textIconColor, fontSize: 18.sp, fontWeight: FontWeight.bold),
                                                       content: Column(
@@ -159,7 +163,7 @@ class ChatSidebar extends StatelessWidget {
                                                             cursorColor: textIconColor,
                                                             style: TextStyle(color: textIconColor, fontSize: 16.sp),
                                                             decoration: InputDecoration(
-                                                              hintText: "enter_new_chat_name".tr, // Fixed translation
+                                                              hintText: "enter_new_chat_name".tr,
                                                               hintStyle: TextStyle(color: textIconColor.withOpacity(0.6)),
                                                               enabledBorder: UnderlineInputBorder(
                                                                   borderSide: BorderSide(color: textIconColor.withOpacity(0.5))),
@@ -168,8 +172,8 @@ class ChatSidebar extends StatelessWidget {
                                                           ),
                                                         ],
                                                       ),
-                                                      textConfirm: "rename".tr, // Fixed translation
-                                                      textCancel: "cancel".tr, // Fixed translation
+                                                      textConfirm: "rename".tr,
+                                                      textCancel: "cancel".tr,
                                                       confirmTextColor: Colors.white,
                                                       buttonColor: Colors.blue,
                                                       cancelTextColor: textIconColor,
@@ -190,13 +194,13 @@ class ChatSidebar extends StatelessWidget {
                                                   case 'delete':
                                                     Get.defaultDialog(
                                                       backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                                                      title: "delete_chat".tr, // Fixed translation
+                                                      title: "delete_chat".tr,
                                                       titleStyle: TextStyle(
                                                           color: textIconColor, fontSize: 18.sp, fontWeight: FontWeight.bold),
-                                                      middleText: "delete_chat_confirm".tr, // Fixed translation
+                                                      middleText: "delete_chat_confirm".tr,
                                                       middleTextStyle: TextStyle(color: textIconColor, fontSize: 14.sp),
-                                                      textConfirm: "delete".tr, // Fixed translation
-                                                      textCancel: "cancel".tr, // Fixed translation
+                                                      textConfirm: "delete".tr,
+                                                      textCancel: "cancel".tr,
                                                       confirmTextColor: Colors.white,
                                                       buttonColor: Colors.blue,
                                                       cancelTextColor: textIconColor,
@@ -218,7 +222,7 @@ class ChatSidebar extends StatelessWidget {
                                                     children: [
                                                       Icon(Icons.share, color: textIconColor, size: 18.w),
                                                       SizedBox(width: 8.w),
-                                                      Text('share'.tr, style: TextStyle(color: textIconColor)), // Fixed translation
+                                                      Text('share'.tr, style: TextStyle(color: textIconColor)),
                                                     ],
                                                   ),
                                                 ),
@@ -233,7 +237,7 @@ class ChatSidebar extends StatelessWidget {
                                                           ),
                                                           SizedBox(width: 8.w),
                                                           Text(
-                                                            chatSession.isPinned.value ? 'unpin_chat'.tr : 'pin_chat'.tr, // Fixed translation
+                                                            chatSession.isPinned.value ? 'unpin_chat'.tr : 'pin_chat'.tr,
                                                             style: TextStyle(color: textIconColor),
                                                           ),
                                                         ],
@@ -245,7 +249,7 @@ class ChatSidebar extends StatelessWidget {
                                                     children: [
                                                       Icon(Icons.edit, color: textIconColor, size: 18.w),
                                                       SizedBox(width: 8.w),
-                                                      Text('rename'.tr, style: TextStyle(color: textIconColor)), // Fixed translation
+                                                      Text('rename'.tr, style: TextStyle(color: textIconColor)),
                                                     ],
                                                   ),
                                                 ),
@@ -255,7 +259,7 @@ class ChatSidebar extends StatelessWidget {
                                                     children: [
                                                       Icon(Icons.delete, color: textIconColor, size: 18.w),
                                                       SizedBox(width: 8.w),
-                                                      Text('delete'.tr, style: TextStyle(color: textIconColor)), // Fixed translation
+                                                      Text('delete'.tr, style: TextStyle(color: textIconColor)),
                                                     ],
                                                   ),
                                                 ),
@@ -269,24 +273,29 @@ class ChatSidebar extends StatelessWidget {
                               ],
                             ),
                           ),
-                          _sidebarItem(context, Icons.search, "search".tr, () { // Fixed translation
+                          _sidebarItem(context, Icons.search, "search".tr, () {
                             Navigator.of(context).pop();
                           }, textIconColor: textIconColor),
-                          _sidebarItem(context, Icons.calendar_today, "calendar".tr, () {}, textIconColor: textIconColor), // Fixed translation
-                          _sidebarItem(context, Icons.timeline, "activity".tr, () {}, textIconColor: textIconColor), // Fixed translation
-                          _sidebarItem(context, Icons.menu, "menu".tr, () {}, textIconColor: textIconColor), // Fixed translation
-                          _sidebarItem(context, Icons.book, "book".tr, () {}, textIconColor: textIconColor), // Fixed translation
+                          _sidebarItem(
+                            context,
+                            Icons.book,
+                            "book".tr,
+                            () {
+                              Navigator.of(context).pop();
+                              Get.to(() => const SavedMessagesPage());
+                            },
+                            textIconColor: textIconColor,
+                          ),
                           SizedBox(height: 16.h),
-
                           Padding(
                             padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 8.h),
-                            child: Text("chat".tr, style: TextStyle(color: sectionTextColor, fontSize: 12.sp)), // Fixed translation
+                            child: Text("chat".tr, style: TextStyle(color: sectionTextColor, fontSize: 12.sp)),
                           ),
-                          _sidebarItem(context, Icons.forum_outlined, "session".tr, () {}, textIconColor: textIconColor), // Fixed translation
+                          _sidebarItem(context, Icons.forum_outlined, "session".tr, () {}, textIconColor: textIconColor),
                           _sidebarItem(
                             context,
                             Icons.dashboard,
-                            "dashboard".tr, // Fixed translation
+                            "dashboard".tr,
                             () {
                               Navigator.of(context).pop();
                               Get.to(() => const DashboardScreen());
@@ -296,16 +305,16 @@ class ChatSidebar extends StatelessWidget {
                           _sidebarItem(
                             context,
                             Icons.delete_forever,
-                            "clear_all_chats".tr, // Fixed translation
+                            "clear_all_chats".tr,
                             () {
                               Get.defaultDialog(
                                 backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                                title: "clear_all_chats_title".tr, // Fixed translation
+                                title: "clear_all_chats_title".tr,
                                 titleStyle: TextStyle(color: textIconColor, fontSize: 18.sp, fontWeight: FontWeight.bold),
-                                middleText: "clear_all_chats_message".tr, // Fixed translation
+                                middleText: "clear_all_chats_message".tr,
                                 middleTextStyle: TextStyle(color: textIconColor, fontSize: 14.sp),
-                                textConfirm: "clear_all".tr, // Fixed translation
-                                textCancel: "cancel".tr, // Fixed translation
+                                textConfirm: "clear_all".tr,
+                                textCancel: "cancel".tr,
                                 confirmTextColor: Colors.white,
                                 buttonColor: Colors.blue,
                                 cancelTextColor: textIconColor,
@@ -330,7 +339,7 @@ class ChatSidebar extends StatelessWidget {
                   builder: (context, snapshot) {
                     String firstLetter = 'G';
                     Color avatarColor = isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400;
-                    String userName = "profile".tr; // Fixed translation
+                    String userName = "profile".tr;
                     if (snapshot.connectionState == ConnectionState.active && snapshot.hasData) {
                       final User? user = snapshot.data;
                       if (user != null) {
@@ -346,9 +355,8 @@ class ChatSidebar extends StatelessWidget {
                     } else {
                       firstLetter = 'G';
                       avatarColor = isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400;
-                      userName = "guest".tr; // Fixed translation
+                      userName = "guest".tr;
                     }
-
                     return ListTile(
                       leading: CircleAvatar(
                         radius: 14,
