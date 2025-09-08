@@ -14,6 +14,9 @@ import 'services_chatbot_controller/speech_service.dart';
 import 'services_chatbot_controller/voice_record_service.dart';
 import 'services_chatbot_controller/attachment_service.dart';
 import 'services_chatbot_controller/chat_history_manager.dart';
+import 'services_chatbot_controller/ai_service.dart';
+import '../Utils/error_handler.dart';
+import '../../config/app_config.dart';
 
 class ChatBotController extends GetxController with WidgetsBindingObserver {
   final TextEditingController textController = TextEditingController();
@@ -94,7 +97,8 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
       hasText.value = textController.text.trim().isNotEmpty;
     });
 
-    // We no longer add a greeting here. The startNewChat() method handles it.
+    // Add welcome message
+    _addWelcomeMessage();
   }
 
   @override
@@ -163,11 +167,42 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
     await _detectLanguage(textToSend);
 
     isBotTyping.value = true;
-    await Future.delayed(const Duration(seconds: 2));
-    String botResponse = "You said: '$textToSend'";
-    String translatedBotResponse = await _translateText(botResponse, userLanguage.value);
-
-    messages.add(Message.textMsg(translatedBotResponse, isUser: false));
+    
+    try {
+      // Generate conversation history for context
+      final conversationHistory = _getConversationHistory();
+      
+      // Generate AI response
+      String aiResponse = await AIService.generateResponse(
+        userMessage: textToSend,
+        persona: currentPersona.value,
+        conversationHistory: conversationHistory,
+        userLanguage: userLanguage.value,
+      );
+      
+      // If AI service fails, use contextual response
+      if (aiResponse.isEmpty) {
+        aiResponse = AIService.generateContextualResponse(textToSend);
+      }
+      
+      // Translate response to user's language if needed
+      String translatedBotResponse = await _translateText(aiResponse, userLanguage.value);
+      
+      // Add slight delay for better UX
+      await Future.delayed(const Duration(milliseconds: 800));
+      
+      messages.add(Message.textMsg(translatedBotResponse, isUser: false));
+      
+    } catch (e) {
+      ErrorHandler.handleAIServiceError(e);
+      // Fallback to simple response
+      String fallbackResponse = await _translateText(
+        AIService.generateContextualResponse(textToSend), 
+        userLanguage.value
+      );
+      messages.add(Message.textMsg(fallbackResponse, isUser: false));
+    }
+    
     isBotTyping.value = false;
 
     if (!isAppInForeground.value && settingsController.notificationsEnabled.value) {
@@ -196,6 +231,23 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
     }
   }
 
+  /// Get conversation history for AI context
+  List<Map<String, String>> _getConversationHistory() {
+    final history = <Map<String, String>>[];
+    final recentMessages = messages.length > 10 
+        ? messages.sublist(messages.length - 10) 
+        : messages; // Last 10 messages for context
+    
+    for (final message in recentMessages) {
+      history.add({
+        'role': message.isUser ? 'user' : 'assistant',
+        'content': message.text,
+      });
+    }
+    
+    return history;
+  }
+
   void saveCurrentChatToHistory() => _chatHistoryManager.saveCurrentChatToHistory(messages.toList());
   void loadChatFromHistory(int index) => _chatHistoryManager.loadChatFromHistory(index);
   RxList<ChatSession> getSortedChatSessions() => _chatHistoryManager.getSortedChatSessions();
@@ -211,6 +263,16 @@ class ChatBotController extends GetxController with WidgetsBindingObserver {
   
   void startNewChat() {
     _chatHistoryManager.startNewChat();
+    _addWelcomeMessage();
+  }
+
+  /// Add welcome message to the chat
+  void _addWelcomeMessage() {
+    if (messages.isEmpty) {
+      final welcomeMessages = AppConfig.welcomeMessages;
+      final randomIndex = DateTime.now().millisecondsSinceEpoch % welcomeMessages.length;
+      messages.add(Message.textMsg(welcomeMessages[randomIndex], isUser: false));
+    }
   }
 
   void updatePersona(String newPersona) {

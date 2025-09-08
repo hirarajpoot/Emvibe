@@ -43,7 +43,7 @@ class ProductivityToolsPage extends StatelessWidget {
               context,
               [
                 _buildToolCard(Icons.alarm_add, "Create Reminder", context, () {
-                  Get.to(() => const CreateReminderPage());
+                  Get.to(() => const CreateReminderTaskPage());
                 }),
                 _buildToolCard(Icons.list_alt, "Get Reminders", context, () {
                   Get.to(() => const GetRemindersPage());

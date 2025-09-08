@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../../Controllers/Reminder/reminder_controller.dart'; 
 
-class CreateReminderPage extends StatelessWidget {
-  const CreateReminderPage({super.key});
+class CreateReminderTaskPage extends StatelessWidget {
+  const CreateReminderTaskPage({super.key});
 
   @override
   Widget build(BuildContext context) {

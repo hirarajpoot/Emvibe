@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'SignupScreen.dart';
 import '../chatbot/chatbot_page.dart';
@@ -62,6 +63,16 @@ class LoginController extends GetxController {
       // 🔹 Step 1: Fixed Admin Check
       if (email == "admin@gmail.com" && password == "123456") {
         Get.offAll(() => const AdminPanelScreen());
+        return;
+      }
+
+      // 🔹 Step 1.5: Demo Account Check
+      if (email == "demo@emvibe.com" && password == "demo123") {
+        // Store demo login status
+        final box = GetStorage();
+        box.write('isLoggedIn', true);
+        box.write('userEmail', email);
+        Get.offAll(() => const ChatBotPage());
         return;
       }
 
@@ -278,6 +289,24 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30.h),
+
+              // Demo Login Button
+              TextButton(
+                onPressed: () {
+                  loginController.emailController.text = "demo@emvibe.com";
+                  loginController.passwordController.text = "demo123";
+                  loginController.loginWithEmailAndPassword();
+                },
+                child: Text(
+                  "Try Demo Account",
+                  style: TextStyle(
+                    color: Colors.blue.shade600,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.h),
 
               TextButton(
                 onPressed: () {

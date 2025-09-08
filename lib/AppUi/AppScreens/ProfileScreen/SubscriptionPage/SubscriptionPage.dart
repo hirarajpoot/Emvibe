@@ -5,6 +5,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../../Controllers/GeneralSettingsController.dart';
 import '../../../Controllers/subscription_controller.dart';
+import '../../../routes/app_routes.dart';
 
 class SubscriptionPage extends StatelessWidget {
   const SubscriptionPage({super.key});
@@ -184,7 +185,7 @@ class SubscriptionPage extends StatelessWidget {
           children: [
             if (!subController.isPremium.value)
               ElevatedButton(
-                onPressed: subController.upgradeToPremium,
+                onPressed: () => Get.toNamed(Routes.upgrade),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade700,
                   foregroundColor: Colors.white,
