@@ -11,8 +11,9 @@ class AppConfig {
   // Stripe Configuration (client-side)
   // Set your Stripe publishable key here (test or live). Do NOT put secret keys in the app.
   static const String stripePublishableKey = 'pk_test_51S464IBTXzSfQeThpfhyuJbIvm6dNeQJf2jLxkeDFZy4AD5RvrHTzpsGitK0WgJGHYGQSJ3QK9tKT94sNNs9auYw00TBYJJKNp';
+  static const String stripeMerchantId = 'merchant.emvibe';
   // Your backend base URL that creates PaymentIntents and Ephemeral Keys
-  static const String stripeBackendBaseUrl = 'https://api-bdo2slxyoq-uc.a.run.app';
+  static const String stripeBackendBaseUrl = 'https://us-central1-emvibe-eba0b.cloudfunctions.net';
   
   // Chat Configuration
   static const int maxConversationHistory = 10;
