@@ -1,0 +1,2 @@
+﻿regex:sk_(live|test)_[A-Za-z0-9_]+=>REDACTED_STRIPE_SECRET
+regex:whsec_[A-Za-z0-9_]+=>REDACTED_STRIPE_WEBHOOK

@@ -1,0 +1,2 @@
+﻿regex:sk_test_[0-9A-Za-z]+=>REDACTED_STRIPE_TEST_KEY
+regex:whsec_[0-9A-Za-z]+=>REDACTED_STRIPE_WEBHOOK
