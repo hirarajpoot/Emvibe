@@ -157,9 +157,25 @@ class SignupController extends GetxController {
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+
+      // Guard against null tokens
+      final String? accessToken = googleAuth.accessToken;
+      final String? idToken = googleAuth.idToken;
+      if (accessToken == null || idToken == null) {
+        isLoading.value = false;
+        Get.snackbar(
+          "Error",
+          "Google sign-in failed: Missing authentication tokens",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+        return;
+      }
+
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: accessToken,
+        idToken: idToken,
       );
 
       UserCredential userCredential =
